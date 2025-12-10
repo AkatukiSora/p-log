@@ -584,7 +584,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/Reaction'
 
   # Friends
   /friends:
@@ -871,6 +871,16 @@ components:
           items:
             type: string
             format: uuid
+
+    Reaction:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
 
     FriendRequest:
       type: object
