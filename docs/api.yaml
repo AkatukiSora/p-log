@@ -361,18 +361,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                goal_id:
-                  type: string
-                  format: uuid
-                content:
-                  type: string
-                image_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/CreatePostRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -441,18 +430,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                goal_id:
-                  type: string
-                  format: uuid
-                content:
-                  type: string
-                image_ids:
-                  type: array
-                  items:
-                    type: string
-                    format: uuid
+              $ref: '#/components/schemas/UpdatePostRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -987,6 +965,34 @@ components:
         updated_at:
           type: string
           format: date-time
+
+    CreatePostRequest:
+      type: object
+      properties:
+        goal_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        image_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdatePostRequest:
+      type: object
+      properties:
+        goal_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        image_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
 
     Reaction:
       type: object
