@@ -607,7 +607,7 @@ paths:
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '201':
           description: リアクション追加完了
     delete:
       summary: 投稿からリアクションを削除
