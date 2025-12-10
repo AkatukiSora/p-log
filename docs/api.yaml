@@ -624,7 +624,7 @@ paths:
   # Friends
   /friends:
     get:
-      summary: 自分のフレンド一覧取得
+      summary: 自分のフレンド（フォロー）一覧取得
       tags: [Friend]
       security:
         - bearerAuth: []
@@ -640,10 +640,32 @@ paths:
                 items:
                   type: string
                   format: uuid
+    post:
+      summary: フレンド追加（フォロー）
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                  description: 対象ユーザーID
+      responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: フレンド追加完了
 
   /users/{user_id}/friends:
     get:
-      summary: ユーザーのフレンド一覧取得
+      summary: ユーザーのフレンド（フォロー）一覧取得
       tags: [Friend]
       security:
         - bearerAuth: []
@@ -668,7 +690,7 @@ paths:
 
   /friends/{user_id}:
     delete:
-      summary: フレンド削除
+      summary: フレンド削除（フォロー解除）
       tags: [Friend]
       security:
         - bearerAuth: []
@@ -683,112 +705,6 @@ paths:
           $ref: '#/components/responses/GeneralError'
         '204':
           description: フレンド削除完了
-
-  # Friend Requests
-  /friend-requests:
-    post:
-      summary: フレンド申請送信
-      tags: [Friend]
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [to_user_id]
-              properties:
-                to_user_id:
-                  type: string
-                  format: uuid
-                  description: 対象ユーザーID
-      responses:
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '201':
-          description: フレンド申請送信完了
-    get:
-      summary: フレンド申請一覧取得
-      tags: [Friend]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: query
-          name: type
-          schema:
-            type: string
-            enum: [sent, received]
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [pending, accepted, rejected]
-      responses:
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '200':
-          description: フレンド申請一覧
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FriendRequest'
-
-  /friend-requests/{request_id}/accept:
-    post:
-      summary: フレンド申請承認
-      tags: [Friend]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: request_id
-          schema:
-            type: string
-          required: true
-      responses:
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '204':
-          description: フレンド申請承認完了
-
-  /friend-requests/{request_id}/reject:
-    post:
-      summary: フレンド申請拒否
-      tags: [Friend]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: request_id
-          schema:
-            type: string
-          required: true
-      responses:
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '204':
-          description: フレンド申請拒否完了
-
-  /friend-requests/{request_id}:
-    delete:
-      summary: フレンド申請キャンセル
-      tags: [Friend]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: request_id
-          schema:
-            type: string
-          required: true
-      responses:
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '204':
-          description: フレンド申請キャンセル完了
 
 components:
   securitySchemes:
@@ -996,25 +912,6 @@ components:
         user_id:
           type: string
           format: uuid
-        created_at:
-          type: string
-          format: date-time
-
-    FriendRequest:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        from_user_id:
-          type: string
-          format: uuid
-        to_user_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum: [pending, accepted, rejected]
         created_at:
           type: string
           format: date-time
