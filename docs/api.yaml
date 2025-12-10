@@ -14,6 +14,8 @@ paths:
       summary: OIDCログインを開始
       tags: [Auth]
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: OIDCプロバイダーへのリダイレクトURLを返す
           content:
@@ -39,6 +41,8 @@ paths:
                 code:
                   type: string
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 認証成功
           content:
@@ -51,6 +55,8 @@ paths:
       summary: ログアウト
       tags: [Auth]
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: ログアウト成功
 
@@ -61,6 +67,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 現在のユーザーの詳細
           content:
@@ -80,6 +88,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateUserRequest'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '201':
           description: ユーザー作成完了
           content:
@@ -98,6 +108,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: ユーザープロフィール
           content:
@@ -122,6 +134,8 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateUserRequest'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: ユーザー更新完了
           content:
@@ -140,6 +154,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: ユーザー削除完了
 
@@ -165,6 +181,8 @@ paths:
                   type: string
                   format: binary
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: アイコンアップロード完了
     get:
@@ -177,6 +195,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: アイコン画像
           content:
@@ -196,6 +216,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: アイコン削除完了
 
@@ -213,6 +235,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateGoalRequest'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '201':
           description: 目標作成完了
           content:
@@ -228,6 +252,8 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 目標一覧
           content:
@@ -248,6 +274,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 目標詳細
           content:
@@ -272,6 +300,8 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateGoalRequest'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 目標更新完了
           content:
@@ -290,6 +320,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: 目標削除完了
 
@@ -306,6 +338,8 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 目標一覧
           content:
@@ -340,6 +374,8 @@ paths:
                     type: string
                     format: uuid
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '201':
           description: 投稿作成完了
           content:
@@ -359,6 +395,8 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 投稿一覧
           content:
@@ -379,6 +417,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 投稿詳細
           content:
@@ -414,6 +454,8 @@ paths:
                     type: string
                     format: uuid
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 投稿更新完了
           content:
@@ -433,6 +475,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: 投稿削除完了
 
@@ -453,6 +497,8 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 投稿一覧
           content:
@@ -477,6 +523,8 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: タイムラインの投稿
           content:
@@ -504,6 +552,8 @@ paths:
                   type: string
                   format: binary
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '201':
           description: 画像アップロード完了
           content:
@@ -528,6 +578,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: 画像バイナリ
           content:
@@ -551,6 +603,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: リアクション追加完了
     delete:
@@ -565,6 +619,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: リアクション削除完了
     get:
@@ -577,6 +633,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: リアクションしたユーザーの一覧
           content:
@@ -594,6 +652,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: フレンド一覧
           content:
@@ -617,6 +677,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: フレンド一覧
           content:
@@ -640,6 +702,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: フレンド削除完了
 
@@ -661,6 +725,8 @@ paths:
                   type: string
                   description: 対象ユーザーID
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '201':
           description: フレンド申請送信完了
     get:
@@ -680,6 +746,8 @@ paths:
             type: string
             enum: [pending, accepted, rejected]
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: フレンド申請一覧
           content:
@@ -702,6 +770,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: フレンド申請承認完了
 
@@ -718,6 +788,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '200':
           description: フレンド申請拒否完了
 
@@ -734,6 +806,8 @@ paths:
             type: string
           required: true
       responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
         '204':
           description: フレンド申請キャンセル完了
 
@@ -758,7 +832,23 @@ components:
         type: integer
         default: 20
 
+  responses:
+    GeneralError:
+      description: エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
     AuthToken:
       type: object
       properties:
