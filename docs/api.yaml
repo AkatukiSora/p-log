@@ -87,13 +87,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
 
-  /users/{userId}:
+  /users/{user_id}:
     get:
       summary: ユーザープロフィール取得
       tags: [User]
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -111,7 +111,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -135,7 +135,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -143,7 +143,7 @@ paths:
         '204':
           description: ユーザー削除完了
 
-  /users/{userId}/icon:
+  /users/{user_id}/icon:
     post:
       summary: ユーザーアイコンのアップロードまたは置換
       tags: [User]
@@ -151,7 +151,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -172,7 +172,7 @@ paths:
       tags: [User]
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -191,7 +191,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -237,13 +237,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Goal'
 
-  /goals/{goalId}:
+  /goals/{goal_id}:
     get:
       summary: 目標詳細取得
       tags: [Goal]
       parameters:
         - in: path
-          name: goalId
+          name: goal_id
           schema:
             type: string
           required: true
@@ -261,7 +261,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: goalId
+          name: goal_id
           schema:
             type: string
           required: true
@@ -285,7 +285,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: goalId
+          name: goal_id
           schema:
             type: string
           required: true
@@ -293,13 +293,13 @@ paths:
         '204':
           description: 目標削除完了
 
-  /users/{userId}/goals:
+  /users/{user_id}/goals:
     get:
       summary: 指定ユーザーの目標一覧取得
       tags: [Goal]
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -368,13 +368,13 @@ paths:
                 items:
                   $ref: '#/components/schemas/Post'
 
-  /posts/{postId}:
+  /posts/{post_id}:
     get:
       summary: 投稿詳細取得
       tags: [Post]
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -392,7 +392,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -428,7 +428,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -436,13 +436,13 @@ paths:
         '204':
           description: 投稿削除完了
 
-  /users/{userId}/posts:
+  /users/{user_id}/posts:
     get:
       summary: 指定ユーザーの投稿一覧取得
       tags: [Post]
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -517,13 +517,13 @@ paths:
                   url:
                     type: string
 
-  /images/{imageId}:
+  /images/{image_id}:
     get:
       summary: 画像取得
       tags: [Image]
       parameters:
         - in: path
-          name: imageId
+          name: image_id
           schema:
             type: string
           required: true
@@ -537,7 +537,7 @@ paths:
                 format: binary
 
   # Reactions
-  /posts/{postId}/reactions:
+  /posts/{post_id}/reactions:
     post:
       summary: 投稿にリアクション（いいね）を追加
       description: 投稿にリアクション（いいね）を追加します。リアクションしたユーザーを記録するために認証が必要です。
@@ -546,7 +546,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -560,7 +560,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -572,7 +572,7 @@ paths:
       tags: [Reaction]
       parameters:
         - in: path
-          name: postId
+          name: post_id
           schema:
             type: string
           required: true
@@ -604,7 +604,7 @@ paths:
                   type: string
                   format: uuid
 
-  /users/{userId}/friends:
+  /users/{user_id}/friends:
     get:
       summary: ユーザーのフレンド一覧取得
       tags: [Friend]
@@ -612,7 +612,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -627,7 +627,7 @@ paths:
                   type: string
                   format: uuid
 
-  /friends/{userId}:
+  /friends/{user_id}:
     delete:
       summary: フレンド削除
       tags: [Friend]
@@ -635,7 +635,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: userId
+          name: user_id
           schema:
             type: string
           required: true
@@ -689,7 +689,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/FriendRequest'
 
-  /friend-requests/{requestId}/accept:
+  /friend-requests/{request_id}/accept:
     post:
       summary: フレンド申請承認
       tags: [Friend]
@@ -697,7 +697,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: requestId
+          name: request_id
           schema:
             type: string
           required: true
@@ -705,7 +705,7 @@ paths:
         '200':
           description: フレンド申請承認完了
 
-  /friend-requests/{requestId}/reject:
+  /friend-requests/{request_id}/reject:
     post:
       summary: フレンド申請拒否
       tags: [Friend]
@@ -713,7 +713,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: requestId
+          name: request_id
           schema:
             type: string
           required: true
@@ -721,7 +721,7 @@ paths:
         '200':
           description: フレンド申請拒否完了
 
-  /friend-requests/{requestId}:
+  /friend-requests/{request_id}:
     delete:
       summary: フレンド申請キャンセル
       tags: [Friend]
@@ -729,7 +729,7 @@ paths:
         - bearerAuth: []
       parameters:
         - in: path
-          name: requestId
+          name: request_id
           schema:
             type: string
           required: true
