@@ -545,8 +545,8 @@ paths:
   # Reactions
   /posts/{postId}/reactions:
     post:
-      summary: 投稿にリアクションを追加
-      description: 投稿にリアクションを追加します。リアクションしたユーザーを記録するために認証が必要です。
+      summary: 投稿にリアクション（いいね）を追加
+      description: 投稿にリアクション（いいね）を追加します。リアクションしたユーザーを記録するために認証が必要です。
       tags: [Reaction]
       security:
         - bearerAuth: []
