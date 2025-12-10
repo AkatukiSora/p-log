@@ -928,6 +928,12 @@ components:
           format: uuid
         title:
           type: string
+        created_at:
+          type: string
+          format: date-time
+        deadline:
+          type: string
+          format: date
 
     CreateGoalRequest:
       type: object
@@ -935,12 +941,18 @@ components:
       properties:
         title:
           type: string
+        deadline:
+          type: string
+          format: date
 
     UpdateGoalRequest:
       type: object
       properties:
         title:
           type: string
+        deadline:
+          type: string
+          format: date
 
     Post:
       type: object
