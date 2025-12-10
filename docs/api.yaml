@@ -323,8 +323,9 @@ paths:
       security:
         - bearerAuth: []
       requestBody:
+        required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
@@ -336,11 +337,11 @@ paths:
                   format: uuid
                 content:
                   type: string
-                image_data:
+                image_ids:
                   type: array
                   items:
                     type: string
-                    format: binary
+                    format: uuid
       responses:
         '201':
           description: 投稿作成完了
@@ -401,7 +402,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
@@ -413,11 +414,11 @@ paths:
                   format: uuid
                 content:
                   type: string
-                image_data:
+                image_ids:
                   type: array
                   items:
                     type: string
-                    format: binary
+                    format: uuid
       responses:
         '200':
           description: 投稿更新完了
@@ -427,6 +428,7 @@ paths:
                 $ref: '#/components/schemas/Post'
     delete:
       summary: 投稿削除
+      description: 投稿を削除します。紐づいている画像も同時に削除されます。
       tags: [Post]
       security:
         - bearerAuth: []
@@ -490,17 +492,42 @@ paths:
                 items:
                   $ref: '#/components/schemas/Post'
 
-  # Post Images
-  /posts/{postId}/images/{imageId}:
+  # Images
+  /images:
+    post:
+      summary: 画像アップロード
+      description: 画像をアップロードしてIDを発行します。このIDを使用して投稿と紐付けます。紐付けられた投稿が削除されると、画像も削除されます。
+      tags: [Image]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: 画像アップロード完了
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  url:
+                    type: string
+
+  /images/{imageId}:
     get:
-      summary: 投稿画像取得
-      tags: [Post]
+      summary: 画像取得
+      tags: [Image]
       parameters:
-        - in: path
-          name: postId
-          schema:
-            type: string
-          required: true
         - in: path
           name: imageId
           schema:
@@ -514,25 +541,6 @@ paths:
               schema:
                 type: string
                 format: binary
-    delete:
-      summary: 投稿画像削除
-      tags: [Post]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: postId
-          schema:
-            type: string
-          required: true
-        - in: path
-          name: imageId
-          schema:
-            type: string
-          required: true
-      responses:
-        '204':
-          description: 画像削除完了
 
   # Reactions
   /posts/{postId}/reactions:
@@ -870,11 +878,11 @@ components:
           format: uuid
         content:
           type: string
-        image_data:
+        image_ids:
           type: array
           items:
             type: string
-            description: Image URL
+            format: uuid
 
     FriendRequest:
       type: object
