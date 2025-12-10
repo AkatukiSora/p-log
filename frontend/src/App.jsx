@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import './App.css'
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import FriendProfile from "./components/FriendProfile";
 import FriendSearch from "./components/FriendSearch";
 import Profile from "./components/Profile";
