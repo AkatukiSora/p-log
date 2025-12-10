@@ -611,6 +611,7 @@ paths:
           description: リアクション追加完了
     delete:
       summary: 投稿からリアクションを削除
+      description: 認証済みの現在のユーザー自身のリアクションを指定した投稿から削除します。`user_id` パラメータは不要で、認証されたユーザーのリアクションのみが削除されます。
       tags: [Reaction]
       security:
         - bearerAuth: []
