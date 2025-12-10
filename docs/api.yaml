@@ -512,6 +512,7 @@ paths:
   /timeline:
     get:
       summary: タイムライン取得（自分とフレンド）
+      description: 投稿は新しい順（降順、最新が最初）で返されます。
       tags: [Timeline]
       security:
         - bearerAuth: []
