@@ -968,6 +968,12 @@ components:
               type: integer
             thumbs_up:
               type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     Reaction:
       type: object
