@@ -624,7 +624,7 @@ paths:
         '204':
           description: リアクション削除完了
     get:
-      summary: 投稿のリアクション一覧取得
+      summary: 投稿にリアクションしたユーザーの一覧取得
       tags: [Reaction]
       parameters:
         - in: path
@@ -975,13 +975,9 @@ components:
           items:
             type: string
             format: uuid
-        reaction_counts:
-          type: object
-          properties:
-            heart:
-              type: integer
-            thumbs_up:
-              type: integer
+        reaction_count:
+          type: integer
+          description: リアクション（いいね）の数
         created_at:
           type: string
           format: date-time
