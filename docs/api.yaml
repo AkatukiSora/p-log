@@ -329,9 +329,6 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: string
-                  format: uuid
                 goal_id:
                   type: string
                   format: uuid
@@ -406,9 +403,6 @@ paths:
             schema:
               type: object
               properties:
-                user_id:
-                  type: string
-                  format: uuid
                 goal_id:
                   type: string
                   format: uuid
@@ -849,18 +843,12 @@ components:
       type: object
       required: [title]
       properties:
-        user_id:
-          type: string
-          format: uuid
         title:
           type: string
 
     UpdateGoalRequest:
       type: object
       properties:
-        user_id:
-          type: string
-          format: uuid
         title:
           type: string
 
