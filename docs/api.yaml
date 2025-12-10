@@ -518,6 +518,7 @@ paths:
       parameters:
         - in: query
           name: goal_id
+          description: フィルターとして使用され、指定したゴールのタイムライン投稿のみを取得します。
           schema:
             type: string
         - $ref: '#/components/parameters/Page'
