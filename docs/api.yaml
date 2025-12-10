@@ -1,0 +1,896 @@
+openapi: 3.0.3
+info:
+  title: p-log API
+  description: p-log application API documentation
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+paths:
+  # Auth
+  /auth/oidc/login:
+    get:
+      summary: OIDCログインを開始
+      tags: [Auth]
+      responses:
+        '200':
+          description: OIDCプロバイダーへのリダイレクトURLを返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_url:
+                    type: string
+                    format: uri
+
+  /auth/oidc/callback:
+    post:
+      summary: OIDCコールバック（コードをトークンに交換）
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+      responses:
+        '200':
+          description: 認証成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+
+  /auth/logout:
+    post:
+      summary: ログアウト
+      tags: [Auth]
+      responses:
+        '200':
+          description: ログアウト成功
+
+  /auth/me:
+    get:
+      summary: 現在のユーザー情報を取得
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 現在のユーザーの詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # User / Icon
+  /users:
+    post:
+      summary: 新規ユーザー登録
+      tags: [User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: ユーザー作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: ユーザープロフィール取得
+      tags: [User]
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ユーザープロフィール
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    post:
+      summary: ユーザープロフィール更新
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: ユーザー更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: ユーザーアカウント削除
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: ユーザー削除完了
+
+  /users/{userId}/icon:
+    post:
+      summary: ユーザーアイコンのアップロードまたは置換
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                icon:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: アイコンアップロード完了
+    get:
+      summary: ユーザーアイコン画像取得
+      tags: [User]
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: アイコン画像
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+    delete:
+      summary: ユーザーアイコン削除
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: アイコン削除完了
+
+  # Goal
+  /goals:
+    post:
+      summary: 新規目標作成
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+      responses:
+        '201':
+          description: 目標作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    get:
+      summary: 現在のユーザーの目標一覧取得
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 目標一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+
+  /goals/{goalId}:
+    get:
+      summary: 目標詳細取得
+      tags: [Goal]
+      parameters:
+        - in: path
+          name: goalId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 目標詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    post:
+      summary: 目標更新
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: goalId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalRequest'
+      responses:
+        '200':
+          description: 目標更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    delete:
+      summary: 目標削除
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: goalId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: 目標削除完了
+
+  /users/{userId}/goals:
+    get:
+      summary: 指定ユーザーの目標一覧取得
+      tags: [Goal]
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 目標一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+
+  # Progress Post
+  /posts:
+    post:
+      summary: 進捗投稿作成
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                goal_id:
+                  type: string
+                  format: uuid
+                content:
+                  type: string
+                image_data:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: 投稿作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    get:
+      summary: 現在のユーザーの投稿一覧取得
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: goal_id
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 投稿一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  /posts/{postId}:
+    get:
+      summary: 投稿詳細取得
+      tags: [Post]
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 投稿詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    post:
+      summary: 投稿更新
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                goal_id:
+                  type: string
+                  format: uuid
+                content:
+                  type: string
+                image_data:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: 投稿更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      summary: 投稿削除
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: 投稿削除完了
+
+  /users/{userId}/posts:
+    get:
+      summary: 指定ユーザーの投稿一覧取得
+      tags: [Post]
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: goal_id
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: 投稿一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  # Timeline
+  /timeline:
+    get:
+      summary: タイムライン取得（自分とフレンド）
+      tags: [Timeline]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: goal_id
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: タイムラインの投稿
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  # Post Images
+  /posts/{postId}/images/{imageId}:
+    get:
+      summary: 投稿画像取得
+      tags: [Post]
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: imageId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 画像バイナリ
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+    delete:
+      summary: 投稿画像削除
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: imageId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: 画像削除完了
+
+  # Reactions
+  /posts/{postId}/reactions:
+    post:
+      summary: 投稿にリアクションを追加
+      description: 投稿にリアクションを追加します。リアクションしたユーザーを記録するために認証が必要です。
+      tags: [Reaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: リアクション追加完了
+    delete:
+      summary: 投稿からリアクションを削除
+      tags: [Reaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: リアクション削除完了
+    get:
+      summary: 投稿のリアクション一覧取得
+      tags: [Reaction]
+      parameters:
+        - in: path
+          name: postId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: リアクションしたユーザーの一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  # Friends
+  /friends:
+    get:
+      summary: 自分のフレンド一覧取得
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: フレンド一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+
+  /users/{userId}/friends:
+    get:
+      summary: ユーザーのフレンド一覧取得
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: フレンド一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+
+  /friends/{userId}:
+    delete:
+      summary: フレンド削除
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: フレンド削除完了
+
+  # Friend Requests
+  /friend-requests:
+    post:
+      summary: フレンド申請送信
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  description: 対象ユーザーID
+      responses:
+        '201':
+          description: フレンド申請送信完了
+    get:
+      summary: フレンド申請一覧取得
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [sent, received]
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, accepted, rejected]
+      responses:
+        '200':
+          description: フレンド申請一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FriendRequest'
+
+  /friend-requests/{requestId}/accept:
+    post:
+      summary: フレンド申請承認
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: requestId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: フレンド申請承認完了
+
+  /friend-requests/{requestId}/reject:
+    post:
+      summary: フレンド申請拒否
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: requestId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: フレンド申請拒否完了
+
+  /friend-requests/{requestId}:
+    delete:
+      summary: フレンド申請キャンセル
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: requestId
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: フレンド申請キャンセル完了
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 20
+
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        genres:
+          type: array
+          items:
+            type: string
+            format: uuid
+        hometown:
+          type: string
+        bio:
+          type: string
+
+    CreateUserRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        genres:
+          type: array
+          items:
+            type: string
+            format: uuid
+        hometown:
+          type: string
+        bio:
+          type: string
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        genres:
+          type: array
+          items:
+            type: string
+            format: uuid
+        hometown:
+          type: string
+        bio:
+          type: string
+
+    Goal:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    CreateGoalRequest:
+      type: object
+      required: [title]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    UpdateGoalRequest:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        goal_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        image_data:
+          type: array
+          items:
+            type: string
+            description: Image URL
+
+    FriendRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        from_user_id:
+          type: string
+          format: uuid
+        to_user_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, accepted, rejected]
+        created_at:
+          type: string
+          format: date-time
