@@ -777,7 +777,7 @@ paths:
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '204':
           description: フレンド申請承認完了
 
   /friend-requests/{request_id}/reject:
@@ -795,7 +795,7 @@ paths:
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '204':
           description: フレンド申請拒否完了
 
   /friend-requests/{request_id}:
