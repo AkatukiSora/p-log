@@ -720,9 +720,11 @@ paths:
           application/json:
             schema:
               type: object
+              required: [to_user_id]
               properties:
-                user_id:
+                to_user_id:
                   type: string
+                  format: uuid
                   description: 対象ユーザーID
       responses:
         default:
