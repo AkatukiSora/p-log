@@ -102,6 +102,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -122,6 +123,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       requestBody:
         required: true
@@ -148,6 +150,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -166,6 +169,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       requestBody:
         content:
@@ -189,6 +193,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -210,6 +215,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -268,6 +274,7 @@ paths:
           name: goal_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -314,6 +321,7 @@ paths:
           name: goal_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -330,6 +338,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
@@ -378,6 +387,7 @@ paths:
           description: フィルターとして使用され、指定したゴールの投稿のみを取得します。
           schema:
             type: string
+            format: uuid
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
@@ -401,6 +411,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -421,6 +432,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       requestBody:
         required: true
@@ -448,6 +460,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -464,12 +477,14 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
         - in: query
           name: goal_id
           description: フィルターとして使用され、指定したゴールの投稿のみを取得します。
           schema:
             type: string
+            format: uuid
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
@@ -498,6 +513,7 @@ paths:
           description: フィルターとして使用され、指定したゴールのタイムライン投稿のみを取得します。
           schema:
             type: string
+            format: uuid
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
@@ -548,6 +564,7 @@ paths:
           name: image_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -573,6 +590,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -590,6 +608,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -604,6 +623,7 @@ paths:
           name: post_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -670,6 +690,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
@@ -695,6 +716,7 @@ paths:
           name: user_id
           schema:
             type: string
+            format: uuid
           required: true
       responses:
         default:
