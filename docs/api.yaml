@@ -103,6 +103,8 @@ paths:
     get:
       summary: ユーザープロフィール取得
       tags: [User]
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: user_id
@@ -111,6 +113,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
         default:
