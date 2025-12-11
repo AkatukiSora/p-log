@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/buttonBottomOption/h/ButtonBottomOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
 
 export default function TimeLine() {
     // タイムライン

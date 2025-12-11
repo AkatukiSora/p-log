@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/buttonBottomOption/h/ButtonBottomOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
 
 export default function AddPost() {
   return (
@@ -8,7 +8,7 @@ export default function AddPost() {
             <h1>進捗の投稿</h1>
         </header>
         <main className="main">
-            ssss
+          ssss
         </main>
         <footer>
             <ButtonBottomOption />

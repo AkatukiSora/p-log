@@ -1,5 +1,5 @@
-import ButtonBottomOption from "../../components/buttonBottomOption/h/ButtonBottomOption"
-import ButtonTopMyOption from "../../components/buttonTopMyOption/ButtonTopMyOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
+import ButtonTopMyOption from "../../components/button/buttonTopMyOption/ButtonTopMyOption"
 
 export default function MyProfile() {
     // 自身のプロフィール画面

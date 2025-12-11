@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import styles from "./ButtonTopMyOption.module.css"
-import { ROUTES } from "../../pages/pathData/path"
+import { ROUTES } from "../../../pages/pathData/path"
 
 export default function ButtonTopMyOption() {
   return (

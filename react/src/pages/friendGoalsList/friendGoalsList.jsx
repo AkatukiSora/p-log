@@ -1,5 +1,5 @@
-import ButtonBottomOption from "../../components/buttonBottomOption/h/ButtonBottomOption"
-import ButtonTopFriendOption from "../../components/buttonTopFriendOption/ButtonTopFriendOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
+import ButtonTopFriendOption from "../../components/button/buttonTopFriendOption/ButtonTopFriendOption"
 
 export default function friendGoalsList() {
     // フレンドの目標一覧

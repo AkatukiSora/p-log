@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { ROUTES } from "../../pages/pathData/path"
+import { ROUTES } from "../../../pages/pathData/path"
 import styles from "./ButtonTopFriendOption.module.css"
 
 export default function ButtonTopFriendOption() {
