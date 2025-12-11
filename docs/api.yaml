@@ -37,6 +37,8 @@ paths:
           required: true
           description: CSRF防止のための状態パラメータ
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -63,6 +65,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -84,6 +88,8 @@ paths:
             schema:
               $ref: '#/components/schemas/UserRequest'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -105,6 +111,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -132,6 +140,12 @@ paths:
             schema:
               $ref: '#/components/schemas/UserRequest'
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -153,6 +167,12 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -181,6 +201,10 @@ paths:
                   type: string
                   format: binary
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -196,6 +220,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -218,6 +244,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -237,6 +267,10 @@ paths:
             schema:
               $ref: '#/components/schemas/GoalRequest'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -254,6 +288,10 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -277,6 +315,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -304,6 +344,12 @@ paths:
             schema:
               $ref: '#/components/schemas/GoalRequest'
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -325,6 +371,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -344,6 +394,10 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -369,6 +423,10 @@ paths:
             schema:
               $ref: '#/components/schemas/PostRequest'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -392,6 +450,10 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -415,6 +477,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -442,6 +506,12 @@ paths:
             schema:
               $ref: '#/components/schemas/PostRequest'
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -464,6 +534,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -489,6 +563,10 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -518,6 +596,10 @@ paths:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -547,6 +629,10 @@ paths:
                   type: string
                   format: binary
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -568,6 +654,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -594,6 +682,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -612,6 +704,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -627,6 +723,8 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -646,6 +744,8 @@ paths:
       security:
         - bearerAuth: []
       responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -675,6 +775,12 @@ paths:
                   format: uuid
                   description: 対象ユーザーID
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         default:
           $ref: '#/components/responses/GeneralError'
         '201':
@@ -694,6 +800,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '200':
@@ -720,6 +830,10 @@ paths:
             format: uuid
           required: true
       responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         default:
           $ref: '#/components/responses/GeneralError'
         '204':
@@ -749,6 +863,24 @@ components:
   responses:
     GeneralError:
       description: エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: リソースが見つからない、または存在しないAPIエンドポイントへのアクセス
       content:
         application/json:
           schema:
