@@ -53,7 +53,7 @@ paths:
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '204':
           description: ログアウト成功
 
   /auth/me:
@@ -179,7 +179,7 @@ paths:
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '204':
           description: アイコンアップロード完了
     get:
       summary: ユーザーアイコン画像取得
