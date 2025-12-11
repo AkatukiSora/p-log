@@ -1,0 +1,28 @@
+.options{
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5%;
+}
+
+.option{
+    font-size: 20px;
+    width: 14vw;
+    line-height: 20px;
+    text-align: center;
+    border: 3px solid #FFF;
+    border-radius: 30px;
+    transition: 0.5s;
+    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+    color: white;
+}
+
+.option:hover{
+    width: 16vw;
+    line-height: 35px;
+}
+
+.link{
+    text-decoration: none;
+}
