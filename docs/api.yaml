@@ -1,0 +1,1050 @@
+openapi: 3.0.3
+info:
+  title: p-log API
+  description: p-log application API documentation
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+paths:
+  # Auth
+  /auth/login:
+    get:
+      summary: OIDCログインを開始
+      tags: [Auth]
+      responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '301':
+          description: OIDCプロバイダーへのリダイレクト
+
+  /auth/callback:
+    get:
+      summary: OIDCコールバック（コードをトークンに交換）
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+          description: OIDCプロバイダーからの認可コード
+        - in: query
+          name: state
+          schema:
+            type: string
+          required: true
+          description: CSRF防止のための状態パラメータ
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 認証成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+
+  /auth/logout:
+    post:
+      summary: ログアウト
+      tags: [Auth]
+      responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: ログアウト成功
+
+  /auth/me:
+    get:
+      summary: 現在のユーザー情報を取得
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 現在のユーザーの詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # User / Icon
+  /users:
+    post:
+      summary: 新規ユーザー登録
+      tags: [User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: ユーザー作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{user_id}:
+    get:
+      summary: ユーザープロフィール取得
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: ユーザープロフィール
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: ユーザープロフィール更新
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: ユーザー更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: ユーザーアカウント削除
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: ユーザー削除完了
+
+  /users/{user_id}/icon:
+    post:
+      summary: ユーザーアイコンのアップロードまたは置換
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                icon:
+                  type: string
+                  format: binary
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: アイコンアップロード完了
+    get:
+      summary: ユーザーアイコン画像取得
+      tags: [User]
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: アイコン画像
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+    delete:
+      summary: ユーザーアイコン削除
+      tags: [User]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: アイコン削除完了
+
+  # Goal
+  /goals:
+    post:
+      summary: 新規目標作成
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalRequest'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: 目標作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    get:
+      summary: 現在のユーザーの目標一覧取得
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 目標一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+
+  /goals/{goal_id}:
+    get:
+      summary: 目標詳細取得
+      tags: [Goal]
+      parameters:
+        - in: path
+          name: goal_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 目標詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    put:
+      summary: 目標更新
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: goal_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalRequest'
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 目標更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+    delete:
+      summary: 目標削除
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: goal_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: 目標削除完了
+
+  /users/{user_id}/goals:
+    get:
+      summary: 指定ユーザーの目標一覧取得
+      tags: [Goal]
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 目標一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Goal'
+
+  # Progress Post
+  /posts:
+    post:
+      summary: 進捗投稿作成
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: 投稿作成完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    get:
+      summary: 現在のユーザーの投稿一覧取得
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: goal_id
+          description: フィルターとして使用され、指定したゴールの投稿のみを取得します。
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 投稿一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  /posts/{post_id}:
+    get:
+      summary: 投稿詳細取得
+      tags: [Post]
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 投稿詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    put:
+      summary: 投稿更新
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRequest'
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 投稿更新完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      summary: 投稿削除
+      description: 投稿を削除します。紐づいている画像も同時に削除されます。
+      tags: [Post]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: 投稿削除完了
+
+  /users/{user_id}/posts:
+    get:
+      summary: 指定ユーザーの投稿一覧取得
+      tags: [Post]
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
+          name: goal_id
+          description: フィルターとして使用され、指定したゴールの投稿のみを取得します。
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 投稿一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  # Timeline
+  /timeline:
+    get:
+      summary: タイムライン取得（自分とフレンド）
+      description: 投稿は新しい順（降順、最新が最初）で返されます。
+      tags: [Timeline]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: goal_id
+          description: フィルターとして使用され、指定したゴールのタイムライン投稿のみを取得します。
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: タイムラインの投稿
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  # Images
+  /images:
+    post:
+      summary: 画像アップロード
+      description: 画像をアップロードしてIDを発行します。このIDを使用して投稿と紐付けます。紐付けられた投稿が削除されると、画像も削除されます。
+      tags: [Image]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: 画像アップロード完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+
+  /images/{image_id}:
+    get:
+      summary: 画像取得
+      tags: [Image]
+      parameters:
+        - in: path
+          name: image_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: 画像バイナリ
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+
+  # Reactions
+  /posts/{post_id}/reactions:
+    post:
+      summary: 投稿にリアクション（いいね）を追加
+      description: 投稿にリアクション（いいね）を追加します。リアクションしたユーザーを記録するために認証が必要です。
+      tags: [Reaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: リアクション追加完了
+    delete:
+      summary: 投稿からリアクションを削除
+      description: 認証済みの現在のユーザー自身のリアクションを指定した投稿から削除します。`user_id` パラメータは不要で、認証されたユーザーのリアクションのみが削除されます。
+      tags: [Reaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: リアクション削除完了
+    get:
+      summary: 投稿にリアクションしたユーザーの一覧取得
+      tags: [Reaction]
+      parameters:
+        - in: path
+          name: post_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: リアクションしたユーザーの一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reaction'
+
+  # Friends
+  /friends:
+    get:
+      summary: 自分のフレンド（フォロー）一覧取得
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: フレンド一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+    post:
+      summary: フレンド追加（フォロー）
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                  description: 対象ユーザーID
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '201':
+          description: フレンド追加完了
+
+  /users/{user_id}/friends:
+    get:
+      summary: ユーザーのフレンド（フォロー）一覧取得
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: フレンド一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+
+  /friends/{user_id}:
+    delete:
+      summary: フレンド削除（フォロー解除）
+      tags: [Friend]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: フレンド削除完了
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http # Localhostの間はhttp 本番環境ではhttps
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        default: 20
+
+  responses:
+    GeneralError:
+      description: エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: リソースが見つからない、または存在しないAPIエンドポイントへのアクセス
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    AuthToken:
+      type: object
+      required: [access_token, token_type, expires_in]
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          description: access_tokenの有効期限（秒）
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        genres:
+          type: array
+          items:
+            type: string
+            format: uuid
+        hometown:
+          type: string
+        bio:
+          type: string
+
+    UserRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        birthday:
+          type: string
+          format: date
+        genres:
+          type: array
+          items:
+            type: string
+            format: uuid
+        hometown:
+          type: string
+        bio:
+          type: string
+
+    Goal:
+      type: object
+      required: [id, user_id, title, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        deadline:
+          type: string
+          format: date
+
+    GoalRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        deadline:
+          type: string
+          format: date
+
+    Post:
+      type: object
+      required: [id, user_id, goal_id, content, reaction_count, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        goal_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        image_urls:
+          type: array
+          items:
+            type: string
+            format: url
+        reaction_count:
+          type: integer
+          description: リアクション（いいね）の数
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PostRequest:
+      type: object
+      required: [goal_id, content]
+      properties:
+        goal_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        image_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    Reaction:
+      type: object
+      required: [user_id, created_at]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+
+    Image:
+      type: object
+      required: [id, url]
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
