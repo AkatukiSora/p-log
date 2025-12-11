@@ -82,7 +82,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateUserRequest'
+              $ref: '#/components/schemas/UserRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -130,7 +130,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
+              $ref: '#/components/schemas/UserRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -235,7 +235,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateGoalRequest'
+              $ref: '#/components/schemas/GoalRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -295,13 +295,14 @@ paths:
           name: goal_id
           schema:
             type: string
+            format: uuid
           required: true
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateGoalRequest'
+              $ref: '#/components/schemas/GoalRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -366,7 +367,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreatePostRequest'
+              $ref: '#/components/schemas/PostRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -439,7 +440,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdatePostRequest'
+              $ref: '#/components/schemas/PostRequest'
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -727,7 +728,7 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
+      type: http # Localhostの間はhttp 本番環境ではhttps
       scheme: bearer
       bearerFormat: JWT
 
@@ -756,9 +757,8 @@ components:
   schemas:
     Error:
       type: object
+      required: [message]
       properties:
-        code:
-          type: integer
         message:
           type: string
 
@@ -779,6 +779,7 @@ components:
 
     User:
       type: object
+      required: [id, name]
       properties:
         id:
           type: string
@@ -798,7 +799,7 @@ components:
         bio:
           type: string
 
-    CreateUserRequest:
+    UserRequest:
       type: object
       required: [name]
       properties:
@@ -817,26 +818,9 @@ components:
         bio:
           type: string
 
-    UpdateUserRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        birthday:
-          type: string
-          format: date
-        genres:
-          type: array
-          items:
-            type: string
-            format: uuid
-        hometown:
-          type: string
-        bio:
-          type: string
-
     Goal:
       type: object
+      required: [id, user_id, title, created_at]
       properties:
         id:
           type: string
@@ -853,7 +837,7 @@ components:
           type: string
           format: date
 
-    CreateGoalRequest:
+    GoalRequest:
       type: object
       required: [title]
       properties:
@@ -863,17 +847,9 @@ components:
           type: string
           format: date
 
-    UpdateGoalRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        deadline:
-          type: string
-          format: date
-
     Post:
       type: object
+      required: [id, user_id, goal_id, content, reaction_count, created_at, updated_at]
       properties:
         id:
           type: string
@@ -901,22 +877,9 @@ components:
           type: string
           format: date-time
 
-    CreatePostRequest:
+    PostRequest:
       type: object
-      properties:
-        goal_id:
-          type: string
-          format: uuid
-        content:
-          type: string
-        image_ids:
-          type: array
-          items:
-            type: string
-            format: uuid
-
-    UpdatePostRequest:
-      type: object
+      required: [goal_id, content]
       properties:
         goal_id:
           type: string
@@ -931,6 +894,7 @@ components:
 
     Reaction:
       type: object
+      required: [user_id, created_at]
       properties:
         user_id:
           type: string
@@ -941,6 +905,7 @@ components:
 
     Image:
       type: object
+      required: [id, url]
       properties:
         id:
           type: string
