@@ -9,37 +9,33 @@ servers:
 
 paths:
   # Auth
-  /auth/oidc/login:
+  /auth/login:
     get:
       summary: OIDCログインを開始
       tags: [Auth]
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
-          description: OIDCプロバイダーへのリダイレクトURLを返す
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  redirect_url:
-                    type: string
-                    format: uri
+        '301':
+          description: OIDCプロバイダーへのリダイレクト
 
-  /auth/oidc/callback:
-    post:
+  /auth/callback:
+    get:
       summary: OIDCコールバック（コードをトークンに交換）
       tags: [Auth]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                code:
-                  type: string
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+          description: OIDCプロバイダーからの認可コード
+        - in: query
+          name: state
+          schema:
+            type: string
+          required: true
+          description: CSRF防止のための状態パラメータ
       responses:
         default:
           $ref: '#/components/responses/GeneralError'
@@ -746,13 +742,18 @@ components:
 
     AuthToken:
       type: object
+      required: [access_token, token_type, expires_in]
       properties:
         access_token:
           type: string
         token_type:
           type: string
+        refresh_token:
+          type: string
         expires_in:
-          type: integer
+          description: access_tokenの有効期限（秒）
+          type: string
+          format: date-time
 
     User:
       type: object
