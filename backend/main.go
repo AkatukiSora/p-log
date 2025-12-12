@@ -22,12 +22,13 @@ func main() {
 	}
 
 	// ハンドラーとセキュリティハンドラーの作成
-	h, err := handler.NewHandler(client, util.NewJWTConfig())
+	jwtConfig := util.NewJWTConfig()
+	h, err := handler.NewHandler(client, jwtConfig)
 	if err != nil {
 		log.Fatalf("failed to create handler: %v", err)
 	}
 
-	sec := security.NewSecurityHandler()
+	sec := security.NewSecurityHandler(jwtConfig)
 
 	srv, err := api.NewServer(h, sec)
 	if err != nil {

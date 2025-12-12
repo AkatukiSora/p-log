@@ -19,9 +19,9 @@ type SecurityHandler struct {
 }
 
 // NewSecurityHandler は新しいSecurityHandlerインスタンスを作成します。
-func NewSecurityHandler() *SecurityHandler {
+func NewSecurityHandler(s *util.JWTConfig) *SecurityHandler {
 	return &SecurityHandler{
-		jwtConfig: util.NewJWTConfig(),
+		jwtConfig: s,
 	}
 }
 
