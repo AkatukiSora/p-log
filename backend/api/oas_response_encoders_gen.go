@@ -219,6 +219,24 @@ func encodeFriendsUserIDDeleteResponse(response FriendsUserIDDeleteRes, w http.R
 	}
 }
 
+func encodeGenresGetResponse(response []Genre, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	e.ArrStart()
+	for _, elem := range response {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
 func encodeGoalsGetResponse(response GoalsGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *GoalsGetOKApplicationJSON:

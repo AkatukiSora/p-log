@@ -197,6 +197,32 @@ func (s *GeneralErrorStatusCode) SetResponse(val Error) {
 	s.Response = val
 }
 
+// Ref: #/components/schemas/Genre
+type Genre struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *Genre) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *Genre) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *Genre) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *Genre) SetName(val string) {
+	s.Name = val
+}
+
 // Ref: #/components/schemas/Goal
 type Goal struct {
 	ID        uuid.UUID `json:"id"`

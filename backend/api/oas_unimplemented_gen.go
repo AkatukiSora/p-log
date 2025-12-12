@@ -76,6 +76,15 @@ func (UnimplementedHandler) FriendsUserIDDelete(ctx context.Context, params Frie
 	return r, ht.ErrNotImplemented
 }
 
+// GenresGet implements GET /genres operation.
+//
+// 利用可能なジャンル一覧取得.
+//
+// GET /genres
+func (UnimplementedHandler) GenresGet(ctx context.Context) (r []Genre, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GoalsGet implements GET /goals operation.
 //
 // 現在のユーザーの目標一覧取得.

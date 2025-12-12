@@ -223,64 +223,98 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'g': // Prefix: "goals"
+			case 'g': // Prefix: "g"
 
-				if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
+				if l := len("g"); len(elem) >= l && elem[0:l] == "g" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleGoalsGetRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleGoalsPostRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,POST")
-					}
-
-					return
+					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case 'e': // Prefix: "enres"
 
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("enres"); len(elem) >= l && elem[0:l] == "enres" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "goal_id"
-					// Leaf parameter, slashes are prohibited
-					idx := strings.IndexByte(elem, '/')
-					if idx >= 0 {
-						break
-					}
-					args[0] = elem
-					elem = ""
-
 					if len(elem) == 0 {
 						// Leaf node.
 						switch r.Method {
-						case "DELETE":
-							s.handleGoalsGoalIDDeleteRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
 						case "GET":
-							s.handleGoalsGoalIDGetRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "PUT":
-							s.handleGoalsGoalIDPutRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
+							s.handleGenresGetRequest([0]string{}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "DELETE,GET,PUT")
+							s.notAllowed(w, r, "GET")
 						}
 
 						return
+					}
+
+				case 'o': // Prefix: "oals"
+
+					if l := len("oals"); len(elem) >= l && elem[0:l] == "oals" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleGoalsGetRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleGoalsPostRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "goal_id"
+						// Leaf parameter, slashes are prohibited
+						idx := strings.IndexByte(elem, '/')
+						if idx >= 0 {
+							break
+						}
+						args[0] = elem
+						elem = ""
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "DELETE":
+								s.handleGoalsGoalIDDeleteRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleGoalsGoalIDGetRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "PUT":
+								s.handleGoalsGoalIDPutRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,PUT")
+							}
+
+							return
+						}
+
 					}
 
 				}
@@ -918,89 +952,128 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'g': // Prefix: "goals"
+			case 'g': // Prefix: "g"
 
-				if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
+				if l := len("g"); len(elem) >= l && elem[0:l] == "g" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = GoalsGetOperation
-						r.summary = "現在のユーザーの目標一覧取得"
-						r.operationID = ""
-						r.operationGroup = ""
-						r.pathPattern = "/goals"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = GoalsPostOperation
-						r.summary = "新規目標作成"
-						r.operationID = ""
-						r.operationGroup = ""
-						r.pathPattern = "/goals"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
+					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case 'e': // Prefix: "enres"
 
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("enres"); len(elem) >= l && elem[0:l] == "enres" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "goal_id"
-					// Leaf parameter, slashes are prohibited
-					idx := strings.IndexByte(elem, '/')
-					if idx >= 0 {
-						break
-					}
-					args[0] = elem
-					elem = ""
-
 					if len(elem) == 0 {
 						// Leaf node.
 						switch method {
-						case "DELETE":
-							r.name = GoalsGoalIDDeleteOperation
-							r.summary = "目標削除"
-							r.operationID = ""
-							r.operationGroup = ""
-							r.pathPattern = "/goals/{goal_id}"
-							r.args = args
-							r.count = 1
-							return r, true
 						case "GET":
-							r.name = GoalsGoalIDGetOperation
-							r.summary = "目標詳細取得"
+							r.name = GenresGetOperation
+							r.summary = "利用可能なジャンル一覧取得"
 							r.operationID = ""
 							r.operationGroup = ""
-							r.pathPattern = "/goals/{goal_id}"
+							r.pathPattern = "/genres"
 							r.args = args
-							r.count = 1
-							return r, true
-						case "PUT":
-							r.name = GoalsGoalIDPutOperation
-							r.summary = "目標更新"
-							r.operationID = ""
-							r.operationGroup = ""
-							r.pathPattern = "/goals/{goal_id}"
-							r.args = args
-							r.count = 1
+							r.count = 0
 							return r, true
 						default:
 							return
 						}
+					}
+
+				case 'o': // Prefix: "oals"
+
+					if l := len("oals"); len(elem) >= l && elem[0:l] == "oals" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = GoalsGetOperation
+							r.summary = "現在のユーザーの目標一覧取得"
+							r.operationID = ""
+							r.operationGroup = ""
+							r.pathPattern = "/goals"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = GoalsPostOperation
+							r.summary = "新規目標作成"
+							r.operationID = ""
+							r.operationGroup = ""
+							r.pathPattern = "/goals"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "goal_id"
+						// Leaf parameter, slashes are prohibited
+						idx := strings.IndexByte(elem, '/')
+						if idx >= 0 {
+							break
+						}
+						args[0] = elem
+						elem = ""
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "DELETE":
+								r.name = GoalsGoalIDDeleteOperation
+								r.summary = "目標削除"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/goals/{goal_id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = GoalsGoalIDGetOperation
+								r.summary = "目標詳細取得"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/goals/{goal_id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "PUT":
+								r.name = GoalsGoalIDPutOperation
+								r.summary = "目標更新"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/goals/{goal_id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
 					}
 
 				}

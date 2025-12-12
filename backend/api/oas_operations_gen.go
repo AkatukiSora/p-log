@@ -13,6 +13,7 @@ const (
 	FriendsGetOperation                 OperationName = "FriendsGet"
 	FriendsPostOperation                OperationName = "FriendsPost"
 	FriendsUserIDDeleteOperation        OperationName = "FriendsUserIDDelete"
+	GenresGetOperation                  OperationName = "GenresGet"
 	GoalsGetOperation                   OperationName = "GoalsGet"
 	GoalsGoalIDDeleteOperation          OperationName = "GoalsGoalIDDelete"
 	GoalsGoalIDGetOperation             OperationName = "GoalsGoalIDGet"

@@ -50,6 +50,12 @@ type Handler interface {
 	//
 	// DELETE /friends/{user_id}
 	FriendsUserIDDelete(ctx context.Context, params FriendsUserIDDeleteParams) (FriendsUserIDDeleteRes, error)
+	// GenresGet implements GET /genres operation.
+	//
+	// 利用可能なジャンル一覧取得.
+	//
+	// GET /genres
+	GenresGet(ctx context.Context) ([]Genre, error)
 	// GoalsGet implements GET /goals operation.
 	//
 	// 現在のユーザーの目標一覧取得.
