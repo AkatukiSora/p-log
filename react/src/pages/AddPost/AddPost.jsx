@@ -39,6 +39,13 @@ const goalsList = [
 ];
 
 export default function AddPost() {
+  const [goals,setGoals]=useState(goalsList);
+  const createProgress=(goals)=>{
+    setSelected(null);
+    setPostContent("")
+    setImage(null);
+    setGoals([...goals,goal]);
+  }
   const [selected,setSelected]=useState(null);
   const [postContent,setPostContent]=useState("");
   const [image,setImage]=useState(null);
@@ -49,18 +56,13 @@ export default function AddPost() {
     setSelected(id)
   }
 
-  const closeForm = () => {
-    setSelected(null);
-    setPostContent("")
-    setImage(null);
-  }
 
   const PostForm = () => {
     if (!selectedGoal) return null;
     return (
       <div>
         <h2 className={styles.option}>{selectedGoal.content}</h2>
-        <div className={styles.post}>
+        <div>
             <div>
               <p>投稿文</p>
               <textarea
@@ -75,7 +77,7 @@ export default function AddPost() {
             {image && (
                             <p>添付ファイル: {image.name}</p>
               )} 
-            <button onClick={closeForm}>投稿</button>
+            <button onClick={(e) => createProgress(e.target)}>投稿</button>
             </div>
         </div>
       </div>
