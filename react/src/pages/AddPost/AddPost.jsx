@@ -44,7 +44,7 @@ export default function AddPost() {
     setSelected(null);
     setPostContent("")
     setImage(null);
-    setGoals([...goals,e.target.value]);
+    setGoals([...goals,{title:e.target.value}]);
   }
   const [selected,setSelected]=useState(null);
   const [postContent,setPostContent]=useState("");
@@ -77,7 +77,7 @@ export default function AddPost() {
             {image && (
                             <p>添付ファイル: {image.name}</p>
               )} 
-            <button onClick={(e) => createProgress(e.target)}>投稿</button>
+            <button onClick={(e) => createProgress(e)}>投稿</button>
             </div>
         </div>
       </div>
