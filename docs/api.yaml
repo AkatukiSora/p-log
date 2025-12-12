@@ -76,6 +76,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
 
+  # Genres
+
+  /genres:
+    get:
+      summary: 利用可能なジャンル一覧取得
+      tags: [Genre]
+      responses:
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '200':
+          description: ジャンル一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+
   # User / Icon
   /users:
     post:
@@ -1047,4 +1065,15 @@ components:
           type: string
           format: uuid
         url:
+          type: string
+
+    # ジャンルスキーマ
+    Genre:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
           type: string
