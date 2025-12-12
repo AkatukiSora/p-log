@@ -32,14 +32,14 @@ h1{
   background-color: white;
   position: relative;
   top: 130px;
-  margin: 0 7.5%;
+  margin:0.75% 250px 7.5%;
   padding: 20px;
   border-radius: 20px;
 }
 
 .myMain,
 .friendMain{
-  top: 200px;
+  top: 190px;
 }
 
 footer{

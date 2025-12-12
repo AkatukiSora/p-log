@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { ROUTES } from "../pathData/path"
 import styles from "./FriendList.module.css"
-import ButtonBottomOption from "../../components/buttonBottomOption/h/ButtonBottomOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption.jsx"
 
 export default function FriendList() {
     // フレンドの選択画面
