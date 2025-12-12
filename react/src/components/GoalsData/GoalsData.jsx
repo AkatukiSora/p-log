@@ -1,9 +1,13 @@
 import GoalData from "./GoalData"
 
-export default function GoalsData({ goalsData }) {
+export default function GoalsData({ goalDatas }) {
+
+    const reverseGoalsDatas = [...goalDatas].reverse();
+
+    // ユーザの目標だけをとれるようにしたい
     return (
         <>
-            {goalsData.map((goalData, idx) => (
+            {reverseGoalsDatas.map((goalData, idx) => (
                 <GoalData key={idx} goalData={goalData}/>
             ))}
         </>

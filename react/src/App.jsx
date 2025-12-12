@@ -6,8 +6,8 @@ import FriendList from './pages/friendList/FriendList.jsx'
 import FriendProfile from './pages/friendProfile/FriendProfile.jsx'
 import FriendGoalsList from './pages/friendGoalsList/friendGoalsList.jsx'
 import TimeLine from './pages/timeLine/TimeLine.jsx'
-import SettingGoal from './pages/settingGoal/settingGoal.jsx'
 import AddPost from './pages/AddPost/AddPost.jsx'
+import SettingGoal from './pages/settingGoal/SettingGoal.jsx'
 
 function App() {
 
