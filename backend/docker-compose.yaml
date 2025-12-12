@@ -32,6 +32,9 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_NAME=p-log
+      - JWT_SECRET=your-secret-key-change-in-production-please-use-strong-random-key
+      - JWT_ISSUER=p-log
+      - JWT_AUDIENCE=p-log-users
     depends_on:
       db:
         condition: service_healthy

@@ -8,6 +8,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.2.0
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	github.com/ogen-go/ogen v1.18.0
