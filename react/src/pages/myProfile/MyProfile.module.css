@@ -4,6 +4,10 @@ main h2{
     border-bottom: 2px solid #000;
 }
 
+label{
+    font-weight: bold;
+}
+
 .form{
     margin: 0 0 25px 0;
     display: flex;
@@ -56,8 +60,8 @@ main h2{
     cursor: pointer;
 }
 .previewImage{
-    width: 15vw;
-    height: 15vw;
+    width: 12vw;
+    height: 12vw;
     border-radius: 50%;
 }
 
@@ -65,7 +69,7 @@ input[type="file"]{
     display: none;
 }
 
-button{
+.button{
     width: 16vw;
     height: 40px;
     padding: 0;
