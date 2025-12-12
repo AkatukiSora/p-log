@@ -40,11 +40,11 @@ const goalsList = [
 
 export default function AddPost() {
   const [goals,setGoals]=useState(goalsList);
-  const createProgress=(goals)=>{
+  const createProgress=(e)=>{
     setSelected(null);
     setPostContent("")
     setImage(null);
-    setGoals([...goals,goal]);
+    setGoals([...goals,e.target.value]);
   }
   const [selected,setSelected]=useState(null);
   const [postContent,setPostContent]=useState("");
