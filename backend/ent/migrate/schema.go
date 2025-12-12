@@ -26,6 +26,7 @@ var (
 		{Name: "title", Type: field.TypeString},
 		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "user_goals", Type: field.TypeUUID},
 	}
 	// GoalsTable holds the schema information for the "goals" table.
@@ -36,7 +37,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "goals_users_goals",
-				Columns:    []*schema.Column{GoalsColumns[4]},
+				Columns:    []*schema.Column{GoalsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -45,7 +46,7 @@ var (
 			{
 				Name:    "goal_user_goals",
 				Unique:  false,
-				Columns: []*schema.Column{GoalsColumns[4]},
+				Columns: []*schema.Column{GoalsColumns[5]},
 			},
 		},
 	}
@@ -93,10 +94,10 @@ var (
 	// PostsColumns holds the columns for the "posts" table.
 	PostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "content", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Size: 1000},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "goal_posts", Type: field.TypeUUID, Nullable: true},
+		{Name: "goal_posts", Type: field.TypeUUID},
 		{Name: "user_posts", Type: field.TypeUUID},
 	}
 	// PostsTable holds the schema information for the "posts" table.
@@ -109,7 +110,7 @@ var (
 				Symbol:     "posts_goals_posts",
 				Columns:    []*schema.Column{PostsColumns[4]},
 				RefColumns: []*schema.Column{GoalsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "posts_users_posts",

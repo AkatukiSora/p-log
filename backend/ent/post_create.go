@@ -31,14 +31,6 @@ func (_c *PostCreate) SetContent(v string) *PostCreate {
 	return _c
 }
 
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (_c *PostCreate) SetNillableContent(v *string) *PostCreate {
-	if v != nil {
-		_c.SetContent(*v)
-	}
-	return _c
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (_c *PostCreate) SetCreatedAt(v time.Time) *PostCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -95,14 +87,6 @@ func (_c *PostCreate) SetUser(v *User) *PostCreate {
 // SetGoalID sets the "goal" edge to the Goal entity by ID.
 func (_c *PostCreate) SetGoalID(id uuid.UUID) *PostCreate {
 	_c.mutation.SetGoalID(id)
-	return _c
-}
-
-// SetNillableGoalID sets the "goal" edge to the Goal entity by ID if the given value is not nil.
-func (_c *PostCreate) SetNillableGoalID(id *uuid.UUID) *PostCreate {
-	if id != nil {
-		_c = _c.SetGoalID(*id)
-	}
 	return _c
 }
 
@@ -192,6 +176,14 @@ func (_c *PostCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_c *PostCreate) check() error {
+	if _, ok := _c.mutation.Content(); !ok {
+		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Post.content"`)}
+	}
+	if v, ok := _c.mutation.Content(); ok {
+		if err := post.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Post.created_at"`)}
 	}
@@ -200,6 +192,9 @@ func (_c *PostCreate) check() error {
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Post.user"`)}
+	}
+	if len(_c.mutation.GoalIDs()) == 0 {
+		return &ValidationError{Name: "goal", err: errors.New(`ent: missing required edge "Post.goal"`)}
 	}
 	return nil
 }
@@ -238,7 +233,7 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
-		_node.Content = &value
+		_node.Content = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(post.FieldCreatedAt, field.TypeTime, value)

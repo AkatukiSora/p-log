@@ -43,6 +43,12 @@ func init() {
 	goalDescCreatedAt := goalFields[3].Descriptor()
 	// goal.DefaultCreatedAt holds the default value on creation for the created_at field.
 	goal.DefaultCreatedAt = goalDescCreatedAt.Default.(func() time.Time)
+	// goalDescUpdatedAt is the schema descriptor for updated_at field.
+	goalDescUpdatedAt := goalFields[4].Descriptor()
+	// goal.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	goal.DefaultUpdatedAt = goalDescUpdatedAt.Default.(func() time.Time)
+	// goal.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	goal.UpdateDefaultUpdatedAt = goalDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// goalDescID is the schema descriptor for id field.
 	goalDescID := goalFields[0].Descriptor()
 	// goal.DefaultID holds the default value on creation for the id field.
@@ -67,6 +73,24 @@ func init() {
 	image.DefaultID = imageDescID.Default.(func() uuid.UUID)
 	postFields := schema.Post{}.Fields()
 	_ = postFields
+	// postDescContent is the schema descriptor for content field.
+	postDescContent := postFields[1].Descriptor()
+	// post.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	post.ContentValidator = func() func(string) error {
+		validators := postDescContent.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(content string) error {
+			for _, fn := range fns {
+				if err := fn(content); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// postDescCreatedAt is the schema descriptor for created_at field.
 	postDescCreatedAt := postFields[2].Descriptor()
 	// post.DefaultCreatedAt holds the default value on creation for the created_at field.

@@ -65,6 +65,12 @@ func (_u *GoalUpdate) ClearDeadline() *GoalUpdate {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *GoalUpdate) SetUpdatedAt(v time.Time) *GoalUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (_u *GoalUpdate) SetUserID(id uuid.UUID) *GoalUpdate {
 	_u.mutation.SetUserID(id)
@@ -125,6 +131,7 @@ func (_u *GoalUpdate) RemovePosts(v ...*Post) *GoalUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *GoalUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -147,6 +154,14 @@ func (_u *GoalUpdate) Exec(ctx context.Context) error {
 func (_u *GoalUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_u *GoalUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := goal.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -183,6 +198,9 @@ func (_u *GoalUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DeadlineCleared() {
 		_spec.ClearField(goal.FieldDeadline, field.TypeTime)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(goal.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -312,6 +330,12 @@ func (_u *GoalUpdateOne) ClearDeadline() *GoalUpdateOne {
 	return _u
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *GoalUpdateOne) SetUpdatedAt(v time.Time) *GoalUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (_u *GoalUpdateOne) SetUserID(id uuid.UUID) *GoalUpdateOne {
 	_u.mutation.SetUserID(id)
@@ -385,6 +409,7 @@ func (_u *GoalUpdateOne) Select(field string, fields ...string) *GoalUpdateOne {
 
 // Save executes the query and returns the updated Goal entity.
 func (_u *GoalUpdateOne) Save(ctx context.Context) (*Goal, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -407,6 +432,14 @@ func (_u *GoalUpdateOne) Exec(ctx context.Context) error {
 func (_u *GoalUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_u *GoalUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := goal.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -460,6 +493,9 @@ func (_u *GoalUpdateOne) sqlSave(ctx context.Context) (_node *Goal, err error) {
 	}
 	if _u.mutation.DeadlineCleared() {
 		_spec.ClearField(goal.FieldDeadline, field.TypeTime)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(goal.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

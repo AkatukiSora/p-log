@@ -21,7 +21,7 @@ type Post struct {
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
 	// Content holds the value of the "content" field.
-	Content *string `json:"content,omitempty"`
+	Content string `json:"content,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -129,8 +129,7 @@ func (_m *Post) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field content", values[i])
 			} else if value.Valid {
-				_m.Content = new(string)
-				*_m.Content = value.String
+				_m.Content = value.String
 			}
 		case post.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -214,10 +213,8 @@ func (_m *Post) String() string {
 	var builder strings.Builder
 	builder.WriteString("Post(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
-	if v := _m.Content; v != nil {
-		builder.WriteString("content=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("content=")
+	builder.WriteString(_m.Content)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

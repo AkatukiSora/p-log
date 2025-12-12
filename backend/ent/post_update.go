@@ -47,12 +47,6 @@ func (_u *PostUpdate) SetNillableContent(v *string) *PostUpdate {
 	return _u
 }
 
-// ClearContent clears the value of the "content" field.
-func (_u *PostUpdate) ClearContent() *PostUpdate {
-	_u.mutation.ClearContent()
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *PostUpdate) SetUpdatedAt(v time.Time) *PostUpdate {
 	_u.mutation.SetUpdatedAt(v)
@@ -73,14 +67,6 @@ func (_u *PostUpdate) SetUser(v *User) *PostUpdate {
 // SetGoalID sets the "goal" edge to the Goal entity by ID.
 func (_u *PostUpdate) SetGoalID(id uuid.UUID) *PostUpdate {
 	_u.mutation.SetGoalID(id)
-	return _u
-}
-
-// SetNillableGoalID sets the "goal" edge to the Goal entity by ID if the given value is not nil.
-func (_u *PostUpdate) SetNillableGoalID(id *uuid.UUID) *PostUpdate {
-	if id != nil {
-		_u = _u.SetGoalID(*id)
-	}
 	return _u
 }
 
@@ -216,8 +202,16 @@ func (_u *PostUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PostUpdate) check() error {
+	if v, ok := _u.mutation.Content(); ok {
+		if err := post.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
+		}
+	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Post.user"`)
+	}
+	if _u.mutation.GoalCleared() && len(_u.mutation.GoalIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Post.goal"`)
 	}
 	return nil
 }
@@ -236,9 +230,6 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
-	}
-	if _u.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)
@@ -425,12 +416,6 @@ func (_u *PostUpdateOne) SetNillableContent(v *string) *PostUpdateOne {
 	return _u
 }
 
-// ClearContent clears the value of the "content" field.
-func (_u *PostUpdateOne) ClearContent() *PostUpdateOne {
-	_u.mutation.ClearContent()
-	return _u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (_u *PostUpdateOne) SetUpdatedAt(v time.Time) *PostUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
@@ -451,14 +436,6 @@ func (_u *PostUpdateOne) SetUser(v *User) *PostUpdateOne {
 // SetGoalID sets the "goal" edge to the Goal entity by ID.
 func (_u *PostUpdateOne) SetGoalID(id uuid.UUID) *PostUpdateOne {
 	_u.mutation.SetGoalID(id)
-	return _u
-}
-
-// SetNillableGoalID sets the "goal" edge to the Goal entity by ID if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableGoalID(id *uuid.UUID) *PostUpdateOne {
-	if id != nil {
-		_u = _u.SetGoalID(*id)
-	}
 	return _u
 }
 
@@ -607,8 +584,16 @@ func (_u *PostUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *PostUpdateOne) check() error {
+	if v, ok := _u.mutation.Content(); ok {
+		if err := post.ContentValidator(v); err != nil {
+			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "Post.content": %w`, err)}
+		}
+	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Post.user"`)
+	}
+	if _u.mutation.GoalCleared() && len(_u.mutation.GoalIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Post.goal"`)
 	}
 	return nil
 }
@@ -644,9 +629,6 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(post.FieldContent, field.TypeString, value)
-	}
-	if _u.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)

@@ -126,16 +126,6 @@ func ContentHasSuffix(v string) predicate.Post {
 	return predicate.Post(sql.FieldHasSuffix(FieldContent, v))
 }
 
-// ContentIsNil applies the IsNil predicate on the "content" field.
-func ContentIsNil() predicate.Post {
-	return predicate.Post(sql.FieldIsNull(FieldContent))
-}
-
-// ContentNotNil applies the NotNil predicate on the "content" field.
-func ContentNotNil() predicate.Post {
-	return predicate.Post(sql.FieldNotNull(FieldContent))
-}
-
 // ContentEqualFold applies the EqualFold predicate on the "content" field.
 func ContentEqualFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldEqualFold(FieldContent, v))

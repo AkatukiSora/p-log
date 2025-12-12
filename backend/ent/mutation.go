@@ -526,6 +526,7 @@ type GoalMutation struct {
 	title         *string
 	deadline      *time.Time
 	created_at    *time.Time
+	updated_at    *time.Time
 	clearedFields map[string]struct{}
 	user          *uuid.UUID
 	cleareduser   bool
@@ -762,6 +763,42 @@ func (m *GoalMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GoalMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GoalMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Goal entity.
+// If the Goal object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GoalMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GoalMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
 // SetUserID sets the "user" edge to the User entity by id.
 func (m *GoalMutation) SetUserID(id uuid.UUID) {
 	m.user = &id
@@ -889,7 +926,7 @@ func (m *GoalMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GoalMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.title != nil {
 		fields = append(fields, goal.FieldTitle)
 	}
@@ -898,6 +935,9 @@ func (m *GoalMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, goal.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, goal.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -913,6 +953,8 @@ func (m *GoalMutation) Field(name string) (ent.Value, bool) {
 		return m.Deadline()
 	case goal.FieldCreatedAt:
 		return m.CreatedAt()
+	case goal.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -928,6 +970,8 @@ func (m *GoalMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeadline(ctx)
 	case goal.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case goal.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Goal field %s", name)
 }
@@ -957,6 +1001,13 @@ func (m *GoalMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case goal.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Goal field %s", name)
@@ -1024,6 +1075,9 @@ func (m *GoalMutation) ResetField(name string) error {
 		return nil
 	case goal.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case goal.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Goal field %s", name)
@@ -1843,7 +1897,7 @@ func (m *PostMutation) Content() (r string, exists bool) {
 // OldContent returns the old "content" field's value of the Post entity.
 // If the Post object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostMutation) OldContent(ctx context.Context) (v *string, err error) {
+func (m *PostMutation) OldContent(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldContent is only allowed on UpdateOne operations")
 	}
@@ -1857,22 +1911,9 @@ func (m *PostMutation) OldContent(ctx context.Context) (v *string, err error) {
 	return oldValue.Content, nil
 }
 
-// ClearContent clears the value of the "content" field.
-func (m *PostMutation) ClearContent() {
-	m.content = nil
-	m.clearedFields[post.FieldContent] = struct{}{}
-}
-
-// ContentCleared returns if the "content" field was cleared in this mutation.
-func (m *PostMutation) ContentCleared() bool {
-	_, ok := m.clearedFields[post.FieldContent]
-	return ok
-}
-
 // ResetContent resets all changes to the "content" field.
 func (m *PostMutation) ResetContent() {
 	m.content = nil
-	delete(m.clearedFields, post.FieldContent)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2265,11 +2306,7 @@ func (m *PostMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *PostMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(post.FieldContent) {
-		fields = append(fields, post.FieldContent)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2282,11 +2319,6 @@ func (m *PostMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *PostMutation) ClearField(name string) error {
-	switch name {
-	case post.FieldContent:
-		m.ClearContent()
-		return nil
-	}
 	return fmt.Errorf("unknown Post nullable field %s", name)
 }
 
