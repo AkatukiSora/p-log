@@ -8,9 +8,7 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
-	"github.com/ogen-go/ogen/conv"
 	ht "github.com/ogen-go/ogen/http"
-	"github.com/ogen-go/ogen/uri"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -462,31 +460,16 @@ func encodeGoalsPostResponse(response GoalsPostRes, w http.ResponseWriter, span 
 
 func encodeImagesImageIDGetResponse(response ImagesImageIDGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *ImagesImageIDGetOKHeaders:
-		// Encoding response headers.
-		{
-			h := uri.NewHeaderEncoder(w.Header())
-			// Encode "Content-Type" header.
-			{
-				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "Content-Type",
-					Explode: false,
-				}
-				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.StringToString(response.ContentType))
-				}); err != nil {
-					return errors.Wrap(err, "encode Content-Type header")
-				}
-			}
-		}
+	case *ImagesImageIDGetOK:
+		w.Header().Set("Content-Type", "image/jpeg")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		writer := w
-		if closer, ok := response.Response.Data.(io.Closer); ok {
+		if closer, ok := response.Data.(io.Closer); ok {
 			defer closer.Close()
 		}
-		if _, err := io.Copy(writer, response.Response); err != nil {
+		if _, err := io.Copy(writer, response); err != nil {
 			return errors.Wrap(err, "write")
 		}
 
@@ -1200,31 +1183,16 @@ func encodeUsersUserIDIconDeleteResponse(response UsersUserIDIconDeleteRes, w ht
 
 func encodeUsersUserIDIconGetResponse(response UsersUserIDIconGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *UsersUserIDIconGetOKHeaders:
-		// Encoding response headers.
-		{
-			h := uri.NewHeaderEncoder(w.Header())
-			// Encode "Content-Type" header.
-			{
-				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "Content-Type",
-					Explode: false,
-				}
-				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.StringToString(response.ContentType))
-				}); err != nil {
-					return errors.Wrap(err, "encode Content-Type header")
-				}
-			}
-		}
+	case *UsersUserIDIconGetOK:
+		w.Header().Set("Content-Type", "image/jpeg")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		writer := w
-		if closer, ok := response.Response.Data.(io.Closer); ok {
+		if closer, ok := response.Data.(io.Closer); ok {
 			defer closer.Close()
 		}
-		if _, err := io.Copy(writer, response.Response); err != nil {
+		if _, err := io.Copy(writer, response); err != nil {
 			return errors.Wrap(err, "write")
 		}
 

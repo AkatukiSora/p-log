@@ -249,7 +249,7 @@ paths:
         '200':
           description: アイコン画像
           content:
-            image/*:
+            image/jpeg:
               schema:
                 type: string
                 format: binary
@@ -683,7 +683,7 @@ paths:
         '200':
           description: 画像バイナリ
           content:
-            image/*:
+            image/jpeg:
               schema:
                 type: string
                 format: binary

@@ -10,10 +10,7 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
-	"github.com/ogen-go/ogen/conv"
-	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/ogenerrors"
-	"github.com/ogen-go/ogen/uri"
 	"github.com/ogen-go/ogen/validate"
 )
 
@@ -1610,7 +1607,7 @@ func decodeImagesImageIDGetResponse(resp *http.Response) (res ImagesImageIDGetRe
 			return res, errors.Wrap(err, "parse media type")
 		}
 		switch {
-		case ht.MatchContentType("image/*", ct):
+		case ct == "image/jpeg":
 			reader := resp.Body
 			b, err := io.ReadAll(reader)
 			if err != nil {
@@ -1618,42 +1615,7 @@ func decodeImagesImageIDGetResponse(resp *http.Response) (res ImagesImageIDGetRe
 			}
 
 			response := ImagesImageIDGetOK{Data: bytes.NewReader(b)}
-			var wrapper ImagesImageIDGetOKHeaders
-			wrapper.Response = response
-			h := uri.NewHeaderDecoder(resp.Header)
-			// Parse "Content-Type" header.
-			{
-				cfg := uri.HeaderParameterDecodingConfig{
-					Name:    "Content-Type",
-					Explode: false,
-				}
-				if err := func() error {
-					if err := h.HasParam(cfg); err == nil {
-						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							wrapper.ContentType = c
-							return nil
-						}); err != nil {
-							return err
-						}
-					} else {
-						return err
-					}
-					return nil
-				}(); err != nil {
-					return res, errors.Wrap(err, "parse Content-Type header")
-				}
-			}
-			return &wrapper, nil
+			return &response, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
@@ -4045,7 +4007,7 @@ func decodeUsersUserIDIconGetResponse(resp *http.Response) (res UsersUserIDIconG
 			return res, errors.Wrap(err, "parse media type")
 		}
 		switch {
-		case ht.MatchContentType("image/*", ct):
+		case ct == "image/jpeg":
 			reader := resp.Body
 			b, err := io.ReadAll(reader)
 			if err != nil {
@@ -4053,42 +4015,7 @@ func decodeUsersUserIDIconGetResponse(resp *http.Response) (res UsersUserIDIconG
 			}
 
 			response := UsersUserIDIconGetOK{Data: bytes.NewReader(b)}
-			var wrapper UsersUserIDIconGetOKHeaders
-			wrapper.Response = response
-			h := uri.NewHeaderDecoder(resp.Header)
-			// Parse "Content-Type" header.
-			{
-				cfg := uri.HeaderParameterDecodingConfig{
-					Name:    "Content-Type",
-					Explode: false,
-				}
-				if err := func() error {
-					if err := h.HasParam(cfg); err == nil {
-						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
-							val, err := d.DecodeValue()
-							if err != nil {
-								return err
-							}
-
-							c, err := conv.ToString(val)
-							if err != nil {
-								return err
-							}
-
-							wrapper.ContentType = c
-							return nil
-						}); err != nil {
-							return err
-						}
-					} else {
-						return err
-					}
-					return nil
-				}(); err != nil {
-					return res, errors.Wrap(err, "parse Content-Type header")
-				}
-			}
-			return &wrapper, nil
+			return &response, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}

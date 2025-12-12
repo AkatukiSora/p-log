@@ -399,33 +399,7 @@ func (s ImagesImageIDGetOK) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-// ImagesImageIDGetOKHeaders wraps ImagesImageIDGetOK with response headers.
-type ImagesImageIDGetOKHeaders struct {
-	ContentType string
-	Response    ImagesImageIDGetOK
-}
-
-// GetContentType returns the value of ContentType.
-func (s *ImagesImageIDGetOKHeaders) GetContentType() string {
-	return s.ContentType
-}
-
-// GetResponse returns the value of Response.
-func (s *ImagesImageIDGetOKHeaders) GetResponse() ImagesImageIDGetOK {
-	return s.Response
-}
-
-// SetContentType sets the value of ContentType.
-func (s *ImagesImageIDGetOKHeaders) SetContentType(val string) {
-	s.ContentType = val
-}
-
-// SetResponse sets the value of Response.
-func (s *ImagesImageIDGetOKHeaders) SetResponse(val ImagesImageIDGetOK) {
-	s.Response = val
-}
-
-func (*ImagesImageIDGetOKHeaders) imagesImageIDGetRes() {}
+func (*ImagesImageIDGetOK) imagesImageIDGetRes() {}
 
 type ImagesPostBadRequest Error
 
@@ -1228,33 +1202,7 @@ func (s UsersUserIDIconGetOK) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-// UsersUserIDIconGetOKHeaders wraps UsersUserIDIconGetOK with response headers.
-type UsersUserIDIconGetOKHeaders struct {
-	ContentType string
-	Response    UsersUserIDIconGetOK
-}
-
-// GetContentType returns the value of ContentType.
-func (s *UsersUserIDIconGetOKHeaders) GetContentType() string {
-	return s.ContentType
-}
-
-// GetResponse returns the value of Response.
-func (s *UsersUserIDIconGetOKHeaders) GetResponse() UsersUserIDIconGetOK {
-	return s.Response
-}
-
-// SetContentType sets the value of ContentType.
-func (s *UsersUserIDIconGetOKHeaders) SetContentType(val string) {
-	s.ContentType = val
-}
-
-// SetResponse sets the value of Response.
-func (s *UsersUserIDIconGetOKHeaders) SetResponse(val UsersUserIDIconGetOK) {
-	s.Response = val
-}
-
-func (*UsersUserIDIconGetOKHeaders) usersUserIDIconGetRes() {}
+func (*UsersUserIDIconGetOK) usersUserIDIconGetRes() {}
 
 type UsersUserIDIconPostBadRequest Error
 
