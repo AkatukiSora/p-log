@@ -72,14 +72,12 @@ const MyGoalsList = () => {
                           {goal.content}
                           <small>期限: {new Date(goal.limit).toLocaleDateString()}</small>
                         </span>
-                        {goal.progress && goal.progress.length > 0 ? (
                           <ul>
                             {goal.progress.map((pro) => (
                               <li key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
                             ))}
                           </ul>
-                        ):""
-                        }
+                        
                     </div>
                 )
         })}
