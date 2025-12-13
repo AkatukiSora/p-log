@@ -8,7 +8,7 @@ import (
 
 // UsersPost implements POST /users operation.
 // 新規ユーザー登録
-func (h *Handler) UsersPost(ctx context.Context, req *api.UserRequest) (api.UsersPostRes, error) {
+func (h *Handler) UsersPost(ctx context.Context, req *api.UserRequest) (*api.User, error) {
 	return &api.User{}, nil
 }
 
