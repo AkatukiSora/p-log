@@ -240,9 +240,6 @@ func (c *JwtHandler) RefreshAccessToken(refreshToken string) (string, error) {
 		return "", err
 	}
 
-	// リフレッシュトークンには通常Emailが含まれていないため、
-	// ここではUserIDのみを使用して新しいアクセストークンを生成
-	// 実際の実装では、UserIDからEmailを取得する必要があります
 	return c.generateAccessToken(claims.UserID, claims.Email)
 }
 
