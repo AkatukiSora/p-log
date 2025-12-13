@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { ROUTES } from "../pathData/path"
 import styles from "./FriendList.module.css"
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
+import { useState } from "react"
 
 export default function FriendList() {
 
@@ -14,6 +15,14 @@ export default function FriendList() {
       {id : "5",name : "e"},
       {id : "6",name : "f"}
     ]
+    
+    const [inpSearch, setInpSearch] = useState("")
+    const [searchedData, setSearchedData] = useState("")
+
+    // 入力したキーワードに関連するデータを抽出
+    const search = () => {
+      
+    }
 
     // フレンドの選択画面
     return (
@@ -22,8 +31,8 @@ export default function FriendList() {
             <header className="header">
                 <h1>フレンド</h1>
                 <div className={styles.search}>
-                    <input type="text"></input>
-                    <button>検索</button>
+                    <input type="text" onChange={e => setInpSearch(e.target.value)}></input>
+                    <button onClick={search}>検索</button>
                 </div>
             </header>
             <main className="main">
