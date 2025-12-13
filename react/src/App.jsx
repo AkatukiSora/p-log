@@ -8,6 +8,7 @@ import FriendGoalsList from './pages/friendGoalsList/friendGoalsList.jsx'
 import TimeLine from './pages/timeLine/TimeLine.jsx'
 import AddPost from './pages/AddPost/AddPost.jsx'
 import SettingGoal from './pages/settingGoal/SettingGoal.jsx'
+import Goals from './pages/goals/Goals.jsx'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path={ROUTES.timeLine} element={<TimeLine />}/>
           <Route path={ROUTES.settingGoal} element={<SettingGoal />}/>
           <Route path={ROUTES.addPost} element={<AddPost />}/>
+          <Route path={ROUTES.goals} element={<Goals />}/>
         </Routes>
       </BrowserRouter>
     </>
