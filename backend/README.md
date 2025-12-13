@@ -4,6 +4,66 @@
 
 このバックエンドAPIは、ogen（OpenAPI Generator for Go）を使用して自動生成されたコードを基盤としており、entフレームワークによるORMを利用しています。
 
+## セットアップ
+
+### 1. 環境変数の設定
+
+`.env.example`をコピーして`.env`ファイルを作成します：
+
+```bash
+cp .env.example .env
+```
+
+### 2. Google OAuth2の設定
+
+1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
+2. プロジェクトを作成または選択
+3. 「APIとサービス」→「認証情報」に移動
+4. 「認証情報を作成」→「OAuthクライアントID」を選択
+5. アプリケーションの種類：「ウェブアプリケーション」を選択
+6. 承認済みのリダイレクトURIに以下を追加：
+   - `http://localhost:8080/api/v1/auth/callback`（開発環境）
+   - 本番環境のURLも追加
+7. 作成されたクライアントIDとクライアントシークレットを`.env`ファイルに設定：
+
+```env
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_REDIRECT_URL=http://localhost:8080/api/v1/auth/callback
+```
+
+### 3. JWT秘密鍵の設定
+
+`.env`ファイルで強力なランダム文字列を設定します：
+
+```bash
+# ランダムな秘密鍵を生成
+openssl rand -base64 32
+```
+
+生成された文字列を`.env`に設定：
+
+```env
+JWT_SECRET=生成された秘密鍵
+```
+
+### 4. 認証フロー
+
+#### ログインフロー：
+
+1. クライアントが `/api/v1/auth/login` にアクセス
+2. Google OAuth2の認証ページにリダイレクト
+3. ユーザーがGoogleでログイン
+4. `/api/v1/auth/callback` にリダイレクト
+5. バックエンドがGoogleからユーザー情報を取得
+6. メールアドレスでユーザーを検索、存在しない場合は新規作成
+7. JWTトークン（access_token、refresh_token）をCookieに設定
+
+#### トークンの保存方法：
+
+- `access_token`: HttpOnly Cookie、有効期限15分、全パスでアクセス可能
+- `refresh_token`: HttpOnly Cookie、有効期限7日間、`/api/v1/auth/refresh`のみでアクセス可能
+
 ## 開発ガイド
 
 ### 認証されたユーザーIDの取得方法

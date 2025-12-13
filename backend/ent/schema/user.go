@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -51,15 +52,20 @@ func (User) Edges() []ent.Edge {
 		// User -> Genre (多対多)
 		edge.To("genres", Genre.Type),
 		// User -> Goal (1対多)
-		edge.To("goals", Goal.Type),
+		edge.To("goals", Goal.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// User -> Post (1対多)
-		edge.To("posts", Post.Type),
+		edge.To("posts", Post.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// User -> Reaction (1対多)
-		edge.To("reactions", Reaction.Type),
+		edge.To("reactions", Reaction.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// User -> Image (アップロードした画像、1対多)
-		edge.To("uploaded_images", Image.Type),
+		edge.To("uploaded_images", Image.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// User -> RefreshToken (1対多)
-		edge.To("refresh_tokens", RefreshToken.Type),
+		edge.To("refresh_tokens", RefreshToken.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// フォロー関係 (一方通行)
 		edge.To("following", User.Type).
 			From("followers"),
