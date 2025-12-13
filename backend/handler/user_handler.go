@@ -1,10 +1,24 @@
 package handler
 
 import (
+	"context"
+
 	"backend/api"
 	"backend/security"
-	"context"
 )
+
+// UsersPost implements POST /users operation.
+// UsersUserIDDelete implements DELETE /users/{user_id} operation.
+// ユーザーアカウント削除
+func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
+	// TODO: APIの処理を実装
+	err := h.client.User.DeleteOneID(params.UserID).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.UsersUserIDDeleteNoContent{}, nil
+}
 
 // UsersUserIDGet implements GET /users/{user_id} operation.
 // ユーザープロフィール取得
@@ -54,12 +68,8 @@ func (h *Handler) UsersUserIDGet(ctx context.Context, params api.UsersUserIDGetP
 // ユーザープロフィール更新
 func (h *Handler) UsersUserIDPut(ctx context.Context, req *api.UserRequest, params api.UsersUserIDPutParams) (api.UsersUserIDPutRes, error) {
 	// TODO: APIの処理を実装
+
 	return &api.User{}, nil
-}
-
-func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
-
-	return &api.UsersUserIDDeleteNoContent{}, nil
 }
 
 // UsersUserIDIconDelete implements DELETE /users/{user_id}/icon operation.
