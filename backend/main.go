@@ -10,9 +10,8 @@ import (
 	"backend/internal/db"
 	"backend/internal/jwt"
 	"backend/security"
-	"net/http"
-
 	_ "github.com/lib/pq"
+	"net/http"
 )
 
 func main() {
@@ -40,6 +39,10 @@ func main() {
 
 	// データベースのマイグレーション
 	db.Migrate(client)
+
+	if err := dev(client, jwtHandler); err != nil {
+		log.Fatalf("failed to run dev function: %v", err)
+	}
 
 	// サーバーの起動
 	log.Println("Starting server on :8080")

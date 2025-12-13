@@ -77,6 +77,11 @@ func (c *JwtHandler) storeRefreshToken(token string, userID uuid.UUID, expiresAt
 	tokenHashByte := sha512.Sum512([]byte(token))
 	tokenHash := hex.EncodeToString(tokenHashByte[:])
 
+	// ユーザーが存在するか事前に検証（外部キー制約違反の早期検出）
+	if _, err := c.client.User.Get(ctx, userID); err != nil {
+		return err
+	}
+
 	// RefreshTokenエンティティを作成してデータベースに保存
 	_, err := c.client.RefreshToken.
 		Create().
@@ -120,10 +125,10 @@ func (c *JwtHandler) isRefreshTokenValid(token string, ctx context.Context) (boo
 }
 
 // GenerateAccessToken はアクセストークンを生成します。
-func (c *JwtHandler) generateAccessToken(userID, email string) (string, error) {
+func (c *JwtHandler) generateAccessToken(userID uuid.UUID, email string) (string, error) {
 	now := time.Now()
 	claims := JWTClaims{
-		UserID:    userID,
+		UserID:    userID.String(),
 		Email:     email,
 		IsRefresh: false,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -140,11 +145,11 @@ func (c *JwtHandler) generateAccessToken(userID, email string) (string, error) {
 }
 
 // GenerateRefreshToken はリフレッシュトークンを生成します。
-func (c *JwtHandler) generateRefreshToken(userID, email string, ctx context.Context) (string, error) {
+func (c *JwtHandler) generateRefreshToken(userID uuid.UUID, email string, ctx context.Context) (string, error) {
 	now := time.Now()
 
 	claims := JWTClaims{
-		UserID:    userID,
+		UserID:    userID.String(),
 		Email:     email,
 		IsRefresh: true,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -163,7 +168,7 @@ func (c *JwtHandler) generateRefreshToken(userID, email string, ctx context.Cont
 	}
 
 	// リフレッシュトークンをデータベースに保存
-	err = c.storeRefreshToken(tokenString, uuid.MustParse(userID), now.Add(c.jwtConfig.RefreshTokenDuration), ctx)
+	err = c.storeRefreshToken(tokenString, userID, now.Add(c.jwtConfig.RefreshTokenDuration), ctx)
 	if err != nil {
 		return "", err
 	}
@@ -213,7 +218,7 @@ func (c *JwtHandler) ValidateToken(tokenString string) (*JWTClaims, error) {
 }
 
 // GenerateTokens はアクセストークンとリフレッシュトークンを生成します。
-func (c *JwtHandler) GenerateTokens(userID, email string, ctx context.Context) (accessToken string, refreshToken string, err error) {
+func (c *JwtHandler) GenerateTokens(userID uuid.UUID, email string, ctx context.Context) (accessToken string, refreshToken string, err error) {
 	accessToken, err = c.generateAccessToken(userID, email)
 	if err != nil {
 		return "", "", err
@@ -243,7 +248,7 @@ func (c *JwtHandler) RefreshAccessToken(refreshToken string, ctx context.Context
 		return "", err
 	}
 
-	return c.generateAccessToken(claims.UserID, claims.Email)
+	return c.generateAccessToken(uuid.MustParse(claims.UserID), claims.Email)
 }
 
 // RevokeRefreshToken はリフレッシュトークンを無効化します。

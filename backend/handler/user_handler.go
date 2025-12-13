@@ -1,15 +1,14 @@
 package handler
 
 import (
-	"context"
-
 	"backend/api"
+	"backend/security"
+	"context"
 )
 
 // UsersPost implements POST /users operation.
 // 新規ユーザー登録
 func (h *Handler) UsersPost(ctx context.Context, req *api.UserRequest) (api.UsersPostRes, error) {
-	// TODO: APIの処理を実装
 	return &api.User{}, nil
 }
 
@@ -23,8 +22,45 @@ func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDD
 // UsersUserIDGet implements GET /users/{user_id} operation.
 // ユーザープロフィール取得
 func (h *Handler) UsersUserIDGet(ctx context.Context, params api.UsersUserIDGetParams) (api.UsersUserIDGetRes, error) {
-	// TODO: APIの処理を実装
-	return &api.User{}, nil
+	if _, ok := security.GetUserIDFromContext(ctx); !ok {
+		return nil, ErrUnauthorized
+	} 
+	userID := params.UserID
+
+	user, err := h.client.User.Get(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	genreIDs, err := user.QueryGenres().IDs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var birthday api.OptDate
+	if user.Birthday != nil {
+		birthday = api.NewOptDate(*user.Birthday)
+	}
+
+	var hometown api.OptString
+	if user.Hometown != nil {
+		hometown = api.NewOptString(*user.Hometown)
+	}
+
+	var bio api.OptString
+	if user.Bio != nil {
+		bio = api.NewOptString(*user.Bio)
+	}
+	res := api.User{
+		ID:       user.ID,
+		Name:     user.Name,
+		Birthday: birthday,
+		Genres:   genreIDs,
+		Hometown: hometown,
+		Bio:      bio,
+	}
+
+	return &res, nil
 }
 
 // UsersUserIDPut implements PUT /users/{user_id} operation.

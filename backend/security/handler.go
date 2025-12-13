@@ -3,6 +3,7 @@ package security
 import (
 	"context"
 	"errors"
+	"log"
 
 	"backend/api"
 	"backend/ent"
@@ -39,6 +40,7 @@ func (s *SecurityHandler) HandleBearerAuth(ctx context.Context, operationName ap
 	// JWTトークンを検証
 	claims, err := s.jwtHandler.ValidateToken(t.Token)
 	if err != nil {
+		log.Printf("token validation failed: %v", err)
 		return ctx, err
 	}
 
