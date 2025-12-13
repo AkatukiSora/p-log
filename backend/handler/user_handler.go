@@ -23,7 +23,7 @@ func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDD
 // UsersUserIDGet implements GET /users/{user_id} operation.
 // ユーザープロフィール取得
 func (h *Handler) UsersUserIDGet(ctx context.Context, params api.UsersUserIDGetParams) (api.UsersUserIDGetRes, error) {
-	if _, ok := security.GetUserIDFromContext(ctx); !ok {
+	if _, err := security.GetUserIDFromContext(ctx); err != nil {
 		return nil, ErrUnauthorized
 	}
 	userID := params.UserID

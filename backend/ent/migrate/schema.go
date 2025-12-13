@@ -39,7 +39,7 @@ var (
 				Symbol:     "goals_users_goals",
 				Columns:    []*schema.Column{GoalsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -75,7 +75,7 @@ var (
 				Symbol:     "images_users_uploaded_images",
 				Columns:    []*schema.Column{ImagesColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -116,7 +116,7 @@ var (
 				Symbol:     "posts_users_posts",
 				Columns:    []*schema.Column{PostsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -160,7 +160,7 @@ var (
 				Symbol:     "reactions_users_reactions",
 				Columns:    []*schema.Column{ReactionsColumns[3]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -190,7 +190,7 @@ var (
 				Symbol:     "refresh_tokens_users_refresh_tokens",
 				Columns:    []*schema.Column{RefreshTokensColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{

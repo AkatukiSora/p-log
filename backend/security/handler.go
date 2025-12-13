@@ -59,7 +59,10 @@ const (
 )
 
 // GetUserIDFromContext はcontextからユーザーIDを取得します。
-func GetUserIDFromContext(ctx context.Context) (string, bool) {
+func GetUserIDFromContext(ctx context.Context) (string, error) {
 	userID, ok := ctx.Value(userIDKey).(string)
-	return userID, ok
+	if !ok {
+		return "", errors.New("ユーザーIDをコンテキストから取得できません")
+	}
+	return userID, nil
 }
