@@ -57,6 +57,11 @@ func (h *Handler) UsersUserIDPut(ctx context.Context, req *api.UserRequest, para
 	return &api.User{}, nil
 }
 
+func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
+
+	return &api.UsersUserIDDeleteNoContent{}, nil
+}
+
 // UsersUserIDIconDelete implements DELETE /users/{user_id}/icon operation.
 // ユーザーアイコン削除
 func (h *Handler) UsersUserIDIconDelete(ctx context.Context, params api.UsersUserIDIconDeleteParams) (api.UsersUserIDIconDeleteRes, error) {
