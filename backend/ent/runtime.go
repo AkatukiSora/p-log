@@ -8,6 +8,7 @@ import (
 	"backend/ent/image"
 	"backend/ent/post"
 	"backend/ent/reaction"
+	"backend/ent/refreshtoken"
 	"backend/ent/schema"
 	"backend/ent/user"
 	"time"
@@ -115,6 +116,24 @@ func init() {
 	reactionDescID := reactionFields[0].Descriptor()
 	// reaction.DefaultID holds the default value on creation for the id field.
 	reaction.DefaultID = reactionDescID.Default.(func() uuid.UUID)
+	refreshtokenFields := schema.RefreshToken{}.Fields()
+	_ = refreshtokenFields
+	// refreshtokenDescTokenHash is the schema descriptor for token_hash field.
+	refreshtokenDescTokenHash := refreshtokenFields[1].Descriptor()
+	// refreshtoken.TokenHashValidator is a validator for the "token_hash" field. It is called by the builders before save.
+	refreshtoken.TokenHashValidator = refreshtokenDescTokenHash.Validators[0].(func(string) error)
+	// refreshtokenDescRevoked is the schema descriptor for revoked field.
+	refreshtokenDescRevoked := refreshtokenFields[3].Descriptor()
+	// refreshtoken.DefaultRevoked holds the default value on creation for the revoked field.
+	refreshtoken.DefaultRevoked = refreshtokenDescRevoked.Default.(bool)
+	// refreshtokenDescCreatedAt is the schema descriptor for created_at field.
+	refreshtokenDescCreatedAt := refreshtokenFields[4].Descriptor()
+	// refreshtoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	refreshtoken.DefaultCreatedAt = refreshtokenDescCreatedAt.Default.(func() time.Time)
+	// refreshtokenDescID is the schema descriptor for id field.
+	refreshtokenDescID := refreshtokenFields[0].Descriptor()
+	// refreshtoken.DefaultID holds the default value on creation for the id field.
+	refreshtoken.DefaultID = refreshtokenDescID.Default.(func() uuid.UUID)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescName is the schema descriptor for name field.

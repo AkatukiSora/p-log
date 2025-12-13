@@ -7,8 +7,9 @@ import (
 
 	"backend/api"
 	"backend/handler"
+	"backend/internal/db"
+	"backend/internal/jwt"
 	"backend/security"
-	"backend/util"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -16,19 +17,20 @@ import (
 
 func main() {
 	// データベースクライアントの作成
-	client, err := util.CreateClient()
+	client, err := db.CreateClient()
 	if err != nil {
 		log.Fatalf("failed to create database client: %v", err)
 	}
 
 	// ハンドラーとセキュリティハンドラーの作成
-	jwtConfig := util.NewJWTConfig()
-	h, err := handler.NewHandler(client, jwtConfig)
+	jwtConfig := jwt.NewJWTConfig()
+	jwtHandler := jwt.NewJwtHandler(jwtConfig, client)
+	h, err := handler.NewHandler(client, jwtHandler)
 	if err != nil {
 		log.Fatalf("failed to create handler: %v", err)
 	}
 
-	sec := security.NewSecurityHandler(jwtConfig)
+	sec := security.NewSecurityHandler(jwtHandler, client)
 
 	srv, err := api.NewServer(h, sec)
 	if err != nil {
@@ -37,7 +39,7 @@ func main() {
 	defer client.Close() // 関数終了時にデータベース接続を閉じる
 
 	// データベースのマイグレーション
-	util.Migrate(client)
+	db.Migrate(client)
 
 	// サーバーの起動
 	log.Println("Starting server on :8080")

@@ -8,6 +8,7 @@ import (
 	"backend/ent/image"
 	"backend/ent/post"
 	"backend/ent/reaction"
+	"backend/ent/refreshtoken"
 	"backend/ent/user"
 	"context"
 	"errors"
@@ -78,12 +79,13 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			genre.Table:    genre.ValidColumn,
-			goal.Table:     goal.ValidColumn,
-			image.Table:    image.ValidColumn,
-			post.Table:     post.ValidColumn,
-			reaction.Table: reaction.ValidColumn,
-			user.Table:     user.ValidColumn,
+			genre.Table:        genre.ValidColumn,
+			goal.Table:         goal.ValidColumn,
+			image.Table:        image.ValidColumn,
+			post.Table:         post.ValidColumn,
+			reaction.Table:     reaction.ValidColumn,
+			refreshtoken.Table: refreshtoken.ValidColumn,
+			user.Table:         user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

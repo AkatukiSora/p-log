@@ -52,13 +52,15 @@ type UserEdges struct {
 	Reactions []*Reaction `json:"reactions,omitempty"`
 	// UploadedImages holds the value of the uploaded_images edge.
 	UploadedImages []*Image `json:"uploaded_images,omitempty"`
+	// RefreshTokens holds the value of the refresh_tokens edge.
+	RefreshTokens []*RefreshToken `json:"refresh_tokens,omitempty"`
 	// Followers holds the value of the followers edge.
 	Followers []*User `json:"followers,omitempty"`
 	// Following holds the value of the following edge.
 	Following []*User `json:"following,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // GenresOrErr returns the Genres value or an error if the edge
@@ -106,10 +108,19 @@ func (e UserEdges) UploadedImagesOrErr() ([]*Image, error) {
 	return nil, &NotLoadedError{edge: "uploaded_images"}
 }
 
+// RefreshTokensOrErr returns the RefreshTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RefreshTokensOrErr() ([]*RefreshToken, error) {
+	if e.loadedTypes[5] {
+		return e.RefreshTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "refresh_tokens"}
+}
+
 // FollowersOrErr returns the Followers value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FollowersOrErr() ([]*User, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.Followers, nil
 	}
 	return nil, &NotLoadedError{edge: "followers"}
@@ -118,7 +129,7 @@ func (e UserEdges) FollowersOrErr() ([]*User, error) {
 // FollowingOrErr returns the Following value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) FollowingOrErr() ([]*User, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Following, nil
 	}
 	return nil, &NotLoadedError{edge: "following"}
@@ -246,6 +257,11 @@ func (_m *User) QueryReactions() *ReactionQuery {
 // QueryUploadedImages queries the "uploaded_images" edge of the User entity.
 func (_m *User) QueryUploadedImages() *ImageQuery {
 	return NewUserClient(_m.config).QueryUploadedImages(_m)
+}
+
+// QueryRefreshTokens queries the "refresh_tokens" edge of the User entity.
+func (_m *User) QueryRefreshTokens() *RefreshTokenQuery {
+	return NewUserClient(_m.config).QueryRefreshTokens(_m)
 }
 
 // QueryFollowers queries the "followers" edge of the User entity.

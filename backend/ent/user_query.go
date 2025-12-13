@@ -9,6 +9,7 @@ import (
 	"backend/ent/post"
 	"backend/ent/predicate"
 	"backend/ent/reaction"
+	"backend/ent/refreshtoken"
 	"backend/ent/user"
 	"context"
 	"database/sql/driver"
@@ -34,6 +35,7 @@ type UserQuery struct {
 	withPosts          *PostQuery
 	withReactions      *ReactionQuery
 	withUploadedImages *ImageQuery
+	withRefreshTokens  *RefreshTokenQuery
 	withFollowers      *UserQuery
 	withFollowing      *UserQuery
 	// intermediate query (i.e. traversal path).
@@ -175,6 +177,28 @@ func (_q *UserQuery) QueryUploadedImages() *ImageQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(image.Table, image.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UploadedImagesTable, user.UploadedImagesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRefreshTokens chains the current query on the "refresh_tokens" edge.
+func (_q *UserQuery) QueryRefreshTokens() *RefreshTokenQuery {
+	query := (&RefreshTokenClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(refreshtoken.Table, refreshtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RefreshTokensTable, user.RefreshTokensColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -423,6 +447,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withPosts:          _q.withPosts.Clone(),
 		withReactions:      _q.withReactions.Clone(),
 		withUploadedImages: _q.withUploadedImages.Clone(),
+		withRefreshTokens:  _q.withRefreshTokens.Clone(),
 		withFollowers:      _q.withFollowers.Clone(),
 		withFollowing:      _q.withFollowing.Clone(),
 		// clone intermediate query.
@@ -483,6 +508,17 @@ func (_q *UserQuery) WithUploadedImages(opts ...func(*ImageQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withUploadedImages = query
+	return _q
+}
+
+// WithRefreshTokens tells the query-builder to eager-load the nodes that are connected to
+// the "refresh_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithRefreshTokens(opts ...func(*RefreshTokenQuery)) *UserQuery {
+	query := (&RefreshTokenClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withRefreshTokens = query
 	return _q
 }
 
@@ -586,12 +622,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			_q.withGenres != nil,
 			_q.withGoals != nil,
 			_q.withPosts != nil,
 			_q.withReactions != nil,
 			_q.withUploadedImages != nil,
+			_q.withRefreshTokens != nil,
 			_q.withFollowers != nil,
 			_q.withFollowing != nil,
 		}
@@ -646,6 +683,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadUploadedImages(ctx, query, nodes,
 			func(n *User) { n.Edges.UploadedImages = []*Image{} },
 			func(n *User, e *Image) { n.Edges.UploadedImages = append(n.Edges.UploadedImages, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withRefreshTokens; query != nil {
+		if err := _q.loadRefreshTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.RefreshTokens = []*RefreshToken{} },
+			func(n *User, e *RefreshToken) { n.Edges.RefreshTokens = append(n.Edges.RefreshTokens, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -846,6 +890,37 @@ func (_q *UserQuery) loadUploadedImages(ctx context.Context, query *ImageQuery, 
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_uploaded_images" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadRefreshTokens(ctx context.Context, query *RefreshTokenQuery, nodes []*User, init func(*User), assign func(*User, *RefreshToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.RefreshToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.RefreshTokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_refresh_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_refresh_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_refresh_tokens" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
