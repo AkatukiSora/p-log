@@ -6,5 +6,6 @@ export const ROUTES = {
     friendGoals : "/p-log/ユーザ名/Friend/Goals",
     timeLine : "/p-log/timeLine",
     settingGoal : "/p-log/settingGoal",
-    addPost : "/p-log/AddPost"
+    addPost : "/p-log/AddPost",
+    goals : "/p-log/goals"
 }
