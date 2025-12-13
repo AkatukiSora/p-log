@@ -5,7 +5,8 @@ import (
 	"errors"
 
 	"backend/api"
-	"backend/util"
+	"backend/ent"
+	"backend/internal/jwt"
 )
 
 var (
@@ -15,13 +16,15 @@ var (
 
 // SecurityHandler はJWT認証を処理するセキュリティハンドラーです。
 type SecurityHandler struct {
-	jwtConfig *util.JWTConfig
+	jwtHandler *jwt.JwtHandler
+	client     *ent.Client
 }
 
 // NewSecurityHandler は新しいSecurityHandlerインスタンスを作成します。
-func NewSecurityHandler(s *util.JWTConfig) *SecurityHandler {
+func NewSecurityHandler(s *jwt.JwtHandler, client *ent.Client) *SecurityHandler {
 	return &SecurityHandler{
-		jwtConfig: s,
+		jwtHandler: s,
+		client:     client,
 	}
 }
 
@@ -34,7 +37,7 @@ func (s *SecurityHandler) HandleBearerAuth(ctx context.Context, operationName ap
 	}
 
 	// JWTトークンを検証
-	claims, err := s.jwtConfig.ValidateToken(t.Token)
+	claims, err := s.jwtHandler.ValidateToken(t.Token)
 	if err != nil {
 		return ctx, err
 	}

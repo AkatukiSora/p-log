@@ -58,6 +58,8 @@ func (User) Edges() []ent.Edge {
 		edge.To("reactions", Reaction.Type),
 		// User -> Image (アップロードした画像、1対多)
 		edge.To("uploaded_images", Image.Type),
+		// User -> RefreshToken (1対多)
+		edge.To("refresh_tokens", RefreshToken.Type),
 		// フォロー関係 (一方通行)
 		edge.To("following", User.Type).
 			From("followers"),

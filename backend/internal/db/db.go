@@ -1,7 +1,8 @@
-package util
+package db
 
 import (
 	"backend/ent"
+	"backend/internal/other"
 	"context"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -10,12 +11,12 @@ import (
 
 func CreateClient() (*ent.Client, error) {
 	// 環境変数から接続情報を取得（デフォルト値を設定）
-	dbHost := getEnv("DB_HOST", "localhost")
-	dbPort := getEnv("DB_PORT", "5432")
-	dbUser := getEnv("DB_USER", "postgres")
-	dbPassword := getEnv("DB_PASSWORD", "password")
-	dbName := getEnv("DB_NAME", "p-log")
-	sslmode := getEnv("DB_SSLMODE", "disable")
+	dbHost := other.GetEnv("DB_HOST", "localhost")
+	dbPort := other.GetEnv("DB_PORT", "5432")
+	dbUser := other.GetEnv("DB_USER", "postgres")
+	dbPassword := other.GetEnv("DB_PASSWORD", "password")
+	dbName := other.GetEnv("DB_NAME", "p-log")
+	sslmode := other.GetEnv("DB_SSLMODE", "disable")
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		dbHost, dbPort, dbUser, dbName, dbPassword, sslmode)

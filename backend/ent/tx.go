@@ -22,6 +22,8 @@ type Tx struct {
 	Post *PostClient
 	// Reaction is the client for interacting with the Reaction builders.
 	Reaction *ReactionClient
+	// RefreshToken is the client for interacting with the RefreshToken builders.
+	RefreshToken *RefreshTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -160,6 +162,7 @@ func (tx *Tx) init() {
 	tx.Image = NewImageClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
 	tx.Reaction = NewReactionClient(tx.config)
+	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

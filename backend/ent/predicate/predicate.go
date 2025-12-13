@@ -21,5 +21,8 @@ type Post func(*sql.Selector)
 // Reaction is the predicate function for reaction builders.
 type Reaction func(*sql.Selector)
 
+// RefreshToken is the predicate function for refreshtoken builders.
+type RefreshToken func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

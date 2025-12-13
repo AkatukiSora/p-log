@@ -14,8 +14,8 @@ var (
 	// ErrClientRequired はent.Clientが必須であることを示すエラーです。
 	ErrClientRequired = errors.New("ent client is required")
 
-	// ErrJWTConfigRequired はJWTConfigが必須であることを示すエラーです。
-	ErrJWTConfigRequired = errors.New("JWT config is required")
+	// ErrJWTHandlerRequired はJWTHandlerが必須であることを示すエラーです。
+	ErrJWTHandlerRequired = errors.New("JWT handler is required")
 
 	// ErrNotFound はリソースが見つからない場合のエラーです。
 	ErrNotFound = errors.New("resource not found")
