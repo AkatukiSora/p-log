@@ -11,6 +11,7 @@ const MOCK_TOKEN = 'mock_access_token';
  */
 const Goals = () => {
   const [goals, setGoals] = useState([]);
+  const [reaction, setReaction] = useState([]);
 
   useEffect(() => {
     // APIから目標一覧を非同期で取得する
@@ -20,30 +21,19 @@ const Goals = () => {
           'Authorization': `Bearer ${MOCK_TOKEN}`,
         },
       }); 
-      
-      const res = [{
-        userId: "user123",
-        // ... 他のフィールド
-      }]
-
-      const userIds = res.map(item => item.userId);
-
-      const userDataArray = userIds.map(async (userId) => {
-        const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${MOCK_TOKEN}`,
-          },
-        });
-        return userResponse.json();
-      })
-
-      const finalData = res.map((item, index) => ({
-        ...item,
-        userData: userDataArray.find((data) => data.userId === item.userId) ,
-      }));
 
       const data = await response.json();
       setGoals(data);
+
+      const tempGoals = data; 
+
+      const initialReaction = tempGoals.map((goal) => {
+        return {
+          goalId: goal.id,
+          isReacted: false,
+        };
+      });
+      setReaction(initialReaction)
     };
 
     fetchGoals();
@@ -80,6 +70,27 @@ const Goals = () => {
     return new Date(dateString).toLocaleDateString('ja-JP');
   };
 
+  const onReactionClick = async (clickedGoalId) => {
+    
+    // await fetch(`${API_BASE_URL}/goals/${clickedGoalId}/reaction`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${MOCK_TOKEN}`,
+    //   },
+    // });
+
+    const updatedReaction = reaction.map((reaction) => {
+      if (reaction.goalId === clickedGoalId) {
+        return {
+          goalId: reaction.goalId,
+          isReacted: !reaction.isReacted,
+        };
+      }
+      return reaction;
+    });
+    setReaction(updatedReaction);  
+  }
 
   return (
     <>
@@ -91,15 +102,22 @@ const Goals = () => {
       <main className="main myMain">
         <div className={styles.container}>
           <ul className={styles.goalList}>
-            {goals.map((goal) => (
+            {goals.map((goal) => {
+              const isReacted = reaction.find((reaction) => reaction.goalId === goal.id)?.isReacted
+
+              return (
               <li key={goal.id} className={styles.goalItem}>
                 <div className={styles.goalTitle}>{goal.title}</div>
                 <div className={styles.goalMeta}>
                   <span>期限: {formatDate(goal.deadline)}</span>
                   <span>作成日: {formatDate(goal.created_at)}</span>
                 </div>
+                <button type='button'  onClick={() => onReactionClick(goal.id)}>                 
+                {isReacted ? "❤️" : "♡"}
+                </button>
               </li>
-            ))}
+            )}
+            )}
           </ul>
         </div>
       </main>
