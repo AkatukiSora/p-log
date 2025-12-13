@@ -72,26 +72,6 @@ func (_u *RefreshTokenUpdate) SetNillableRevoked(v *bool) *RefreshTokenUpdate {
 	return _u
 }
 
-// SetUsedAt sets the "used_at" field.
-func (_u *RefreshTokenUpdate) SetUsedAt(v time.Time) *RefreshTokenUpdate {
-	_u.mutation.SetUsedAt(v)
-	return _u
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (_u *RefreshTokenUpdate) SetNillableUsedAt(v *time.Time) *RefreshTokenUpdate {
-	if v != nil {
-		_u.SetUsedAt(*v)
-	}
-	return _u
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (_u *RefreshTokenUpdate) ClearUsedAt() *RefreshTokenUpdate {
-	_u.mutation.ClearUsedAt()
-	return _u
-}
-
 // SetUserID sets the "user" edge to the User entity by ID.
 func (_u *RefreshTokenUpdate) SetUserID(id uuid.UUID) *RefreshTokenUpdate {
 	_u.mutation.SetUserID(id)
@@ -174,12 +154,6 @@ func (_u *RefreshTokenUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if value, ok := _u.mutation.Revoked(); ok {
 		_spec.SetField(refreshtoken.FieldRevoked, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.UsedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUsedAt, field.TypeTime, value)
-	}
-	if _u.mutation.UsedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldUsedAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -269,26 +243,6 @@ func (_u *RefreshTokenUpdateOne) SetNillableRevoked(v *bool) *RefreshTokenUpdate
 	if v != nil {
 		_u.SetRevoked(*v)
 	}
-	return _u
-}
-
-// SetUsedAt sets the "used_at" field.
-func (_u *RefreshTokenUpdateOne) SetUsedAt(v time.Time) *RefreshTokenUpdateOne {
-	_u.mutation.SetUsedAt(v)
-	return _u
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (_u *RefreshTokenUpdateOne) SetNillableUsedAt(v *time.Time) *RefreshTokenUpdateOne {
-	if v != nil {
-		_u.SetUsedAt(*v)
-	}
-	return _u
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (_u *RefreshTokenUpdateOne) ClearUsedAt() *RefreshTokenUpdateOne {
-	_u.mutation.ClearUsedAt()
 	return _u
 }
 
@@ -404,12 +358,6 @@ func (_u *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshTok
 	}
 	if value, ok := _u.mutation.Revoked(); ok {
 		_spec.SetField(refreshtoken.FieldRevoked, field.TypeBool, value)
-	}
-	if value, ok := _u.mutation.UsedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUsedAt, field.TypeTime, value)
-	}
-	if _u.mutation.UsedAtCleared() {
-		_spec.ClearField(refreshtoken.FieldUsedAt, field.TypeTime)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -62,20 +62,6 @@ func (_c *RefreshTokenCreate) SetNillableCreatedAt(v *time.Time) *RefreshTokenCr
 	return _c
 }
 
-// SetUsedAt sets the "used_at" field.
-func (_c *RefreshTokenCreate) SetUsedAt(v time.Time) *RefreshTokenCreate {
-	_c.mutation.SetUsedAt(v)
-	return _c
-}
-
-// SetNillableUsedAt sets the "used_at" field if the given value is not nil.
-func (_c *RefreshTokenCreate) SetNillableUsedAt(v *time.Time) *RefreshTokenCreate {
-	if v != nil {
-		_c.SetUsedAt(*v)
-	}
-	return _c
-}
-
 // SetID sets the "id" field.
 func (_c *RefreshTokenCreate) SetID(v uuid.UUID) *RefreshTokenCreate {
 	_c.mutation.SetID(v)
@@ -222,10 +208,6 @@ func (_c *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(refreshtoken.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if value, ok := _c.mutation.UsedAt(); ok {
-		_spec.SetField(refreshtoken.FieldUsedAt, field.TypeTime, value)
-		_node.UsedAt = &value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

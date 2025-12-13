@@ -32,10 +32,6 @@ func (RefreshToken) Fields() []ent.Field {
 		// トークン作成日時
 		field.Time("created_at").
 			Default(time.Now).Immutable(),
-		// 最後に使用された日時
-		field.Time("used_at").
-			Optional().
-			Nillable(),
 	}
 }
 

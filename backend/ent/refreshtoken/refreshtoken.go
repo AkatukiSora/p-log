@@ -23,8 +23,6 @@ const (
 	FieldRevoked = "revoked"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldUsedAt holds the string denoting the used_at field in the database.
-	FieldUsedAt = "used_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the refreshtoken in the database.
@@ -45,7 +43,6 @@ var Columns = []string{
 	FieldExpiresAt,
 	FieldRevoked,
 	FieldCreatedAt,
-	FieldUsedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "refresh_tokens"
@@ -106,11 +103,6 @@ func ByRevoked(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUsedAt orders the results by the used_at field.
-func ByUsedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUsedAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

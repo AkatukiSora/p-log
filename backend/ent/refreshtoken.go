@@ -27,8 +27,6 @@ type RefreshToken struct {
 	Revoked bool `json:"revoked,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UsedAt holds the value of the "used_at" field.
-	UsedAt *time.Time `json:"used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
 	Edges               RefreshTokenEdges `json:"edges"`
@@ -65,7 +63,7 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case refreshtoken.FieldTokenHash:
 			values[i] = new(sql.NullString)
-		case refreshtoken.FieldExpiresAt, refreshtoken.FieldCreatedAt, refreshtoken.FieldUsedAt:
+		case refreshtoken.FieldExpiresAt, refreshtoken.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case refreshtoken.FieldID:
 			values[i] = new(uuid.UUID)
@@ -115,13 +113,6 @@ func (_m *RefreshToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
-			}
-		case refreshtoken.FieldUsedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field used_at", values[i])
-			} else if value.Valid {
-				_m.UsedAt = new(time.Time)
-				*_m.UsedAt = value.Time
 			}
 		case refreshtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -182,11 +173,6 @@ func (_m *RefreshToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := _m.UsedAt; v != nil {
-		builder.WriteString("used_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

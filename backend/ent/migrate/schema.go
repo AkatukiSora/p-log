@@ -178,7 +178,6 @@ var (
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "revoked", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_refresh_tokens", Type: field.TypeUUID},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
@@ -189,7 +188,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "refresh_tokens_users_refresh_tokens",
-				Columns:    []*schema.Column{RefreshTokensColumns[6]},
+				Columns:    []*schema.Column{RefreshTokensColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -208,7 +207,7 @@ var (
 			{
 				Name:    "refreshtoken_user_refresh_tokens",
 				Unique:  false,
-				Columns: []*schema.Column{RefreshTokensColumns[6]},
+				Columns: []*schema.Column{RefreshTokensColumns[5]},
 			},
 		},
 	}

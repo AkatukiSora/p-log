@@ -76,11 +76,6 @@ func CreatedAt(v time.Time) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UsedAt applies equality check predicate on the "used_at" field. It's identical to UsedAtEQ.
-func UsedAt(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldUsedAt, v))
-}
-
 // TokenHashEQ applies the EQ predicate on the "token_hash" field.
 func TokenHashEQ(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldTokenHash, v))
@@ -234,56 +229,6 @@ func CreatedAtLT(v time.Time) predicate.RefreshToken {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// UsedAtEQ applies the EQ predicate on the "used_at" field.
-func UsedAtEQ(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldUsedAt, v))
-}
-
-// UsedAtNEQ applies the NEQ predicate on the "used_at" field.
-func UsedAtNEQ(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNEQ(FieldUsedAt, v))
-}
-
-// UsedAtIn applies the In predicate on the "used_at" field.
-func UsedAtIn(vs ...time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIn(FieldUsedAt, vs...))
-}
-
-// UsedAtNotIn applies the NotIn predicate on the "used_at" field.
-func UsedAtNotIn(vs ...time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotIn(FieldUsedAt, vs...))
-}
-
-// UsedAtGT applies the GT predicate on the "used_at" field.
-func UsedAtGT(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGT(FieldUsedAt, v))
-}
-
-// UsedAtGTE applies the GTE predicate on the "used_at" field.
-func UsedAtGTE(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGTE(FieldUsedAt, v))
-}
-
-// UsedAtLT applies the LT predicate on the "used_at" field.
-func UsedAtLT(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLT(FieldUsedAt, v))
-}
-
-// UsedAtLTE applies the LTE predicate on the "used_at" field.
-func UsedAtLTE(v time.Time) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLTE(FieldUsedAt, v))
-}
-
-// UsedAtIsNil applies the IsNil predicate on the "used_at" field.
-func UsedAtIsNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIsNull(FieldUsedAt))
-}
-
-// UsedAtNotNil applies the NotNil predicate on the "used_at" field.
-func UsedAtNotNil() predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotNull(FieldUsedAt))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

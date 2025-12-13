@@ -2955,7 +2955,6 @@ type RefreshTokenMutation struct {
 	expires_at    *time.Time
 	revoked       *bool
 	created_at    *time.Time
-	used_at       *time.Time
 	clearedFields map[string]struct{}
 	user          *uuid.UUID
 	cleareduser   bool
@@ -3212,55 +3211,6 @@ func (m *RefreshTokenMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUsedAt sets the "used_at" field.
-func (m *RefreshTokenMutation) SetUsedAt(t time.Time) {
-	m.used_at = &t
-}
-
-// UsedAt returns the value of the "used_at" field in the mutation.
-func (m *RefreshTokenMutation) UsedAt() (r time.Time, exists bool) {
-	v := m.used_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUsedAt returns the old "used_at" field's value of the RefreshToken entity.
-// If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefreshTokenMutation) OldUsedAt(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUsedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUsedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUsedAt: %w", err)
-	}
-	return oldValue.UsedAt, nil
-}
-
-// ClearUsedAt clears the value of the "used_at" field.
-func (m *RefreshTokenMutation) ClearUsedAt() {
-	m.used_at = nil
-	m.clearedFields[refreshtoken.FieldUsedAt] = struct{}{}
-}
-
-// UsedAtCleared returns if the "used_at" field was cleared in this mutation.
-func (m *RefreshTokenMutation) UsedAtCleared() bool {
-	_, ok := m.clearedFields[refreshtoken.FieldUsedAt]
-	return ok
-}
-
-// ResetUsedAt resets all changes to the "used_at" field.
-func (m *RefreshTokenMutation) ResetUsedAt() {
-	m.used_at = nil
-	delete(m.clearedFields, refreshtoken.FieldUsedAt)
-}
-
 // SetUserID sets the "user" edge to the User entity by id.
 func (m *RefreshTokenMutation) SetUserID(id uuid.UUID) {
 	m.user = &id
@@ -3334,7 +3284,7 @@ func (m *RefreshTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefreshTokenMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 4)
 	if m.token_hash != nil {
 		fields = append(fields, refreshtoken.FieldTokenHash)
 	}
@@ -3346,9 +3296,6 @@ func (m *RefreshTokenMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, refreshtoken.FieldCreatedAt)
-	}
-	if m.used_at != nil {
-		fields = append(fields, refreshtoken.FieldUsedAt)
 	}
 	return fields
 }
@@ -3366,8 +3313,6 @@ func (m *RefreshTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Revoked()
 	case refreshtoken.FieldCreatedAt:
 		return m.CreatedAt()
-	case refreshtoken.FieldUsedAt:
-		return m.UsedAt()
 	}
 	return nil, false
 }
@@ -3385,8 +3330,6 @@ func (m *RefreshTokenMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldRevoked(ctx)
 	case refreshtoken.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case refreshtoken.FieldUsedAt:
-		return m.OldUsedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -3424,13 +3367,6 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case refreshtoken.FieldUsedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUsedAt(v)
-		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -3460,11 +3396,7 @@ func (m *RefreshTokenMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *RefreshTokenMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(refreshtoken.FieldUsedAt) {
-		fields = append(fields, refreshtoken.FieldUsedAt)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -3477,11 +3409,6 @@ func (m *RefreshTokenMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *RefreshTokenMutation) ClearField(name string) error {
-	switch name {
-	case refreshtoken.FieldUsedAt:
-		m.ClearUsedAt()
-		return nil
-	}
 	return fmt.Errorf("unknown RefreshToken nullable field %s", name)
 }
 
@@ -3500,9 +3427,6 @@ func (m *RefreshTokenMutation) ResetField(name string) error {
 		return nil
 	case refreshtoken.FieldCreatedAt:
 		m.ResetCreatedAt()
-		return nil
-	case refreshtoken.FieldUsedAt:
-		m.ResetUsedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
