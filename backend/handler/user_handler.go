@@ -6,25 +6,12 @@ import (
 	"context"
 )
 
-// UsersPost implements POST /users operation.
-// 新規ユーザー登録
-func (h *Handler) UsersPost(ctx context.Context, req *api.UserRequest) (*api.User, error) {
-	return &api.User{}, nil
-}
-
-// UsersUserIDDelete implements DELETE /users/{user_id} operation.
-// ユーザーアカウント削除
-func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
-	// TODO: APIの処理を実装
-	return &api.UsersUserIDDeleteNoContent{}, nil
-}
-
 // UsersUserIDGet implements GET /users/{user_id} operation.
 // ユーザープロフィール取得
 func (h *Handler) UsersUserIDGet(ctx context.Context, params api.UsersUserIDGetParams) (api.UsersUserIDGetRes, error) {
 	if _, ok := security.GetUserIDFromContext(ctx); !ok {
 		return nil, ErrUnauthorized
-	} 
+	}
 	userID := params.UserID
 
 	user, err := h.client.User.Get(ctx, userID)
