@@ -253,10 +253,11 @@ func (c *JwtHandler) RevokeRefreshToken(refreshToken string, ctx context.Context
 	tokenHash := hex.EncodeToString(tokenHashByte[:])
 
 	// データベースからリフレッシュトークンを削除
-	_, err := c.client.RefreshToken.
-		Delete().
+	err := c.client.RefreshToken.
+		Update().
 		Where(refreshtoken.TokenHashEQ(tokenHash)).
-		Exec(context.Background())
+		SetRevoked(true).
+		Exec(ctx)
 	if err != nil {
 		return err
 	}
