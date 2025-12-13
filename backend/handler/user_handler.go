@@ -1,10 +1,24 @@
 package handler
 
 import (
+	"context"
+
 	"backend/api"
 	"backend/security"
-	"context"
 )
+
+// UsersPost implements POST /users operation.
+// UsersUserIDDelete implements DELETE /users/{user_id} operation.
+// ユーザーアカウント削除
+func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
+	// TODO: APIの処理を実装
+	err := h.client.User.DeleteOneID(params.UserID).Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &api.UsersUserIDDeleteNoContent{}, nil
+}
 
 // UsersUserIDGet implements GET /users/{user_id} operation.
 // ユーザープロフィール取得
@@ -54,12 +68,61 @@ func (h *Handler) UsersUserIDGet(ctx context.Context, params api.UsersUserIDGetP
 // ユーザープロフィール更新
 func (h *Handler) UsersUserIDPut(ctx context.Context, req *api.UserRequest, params api.UsersUserIDPutParams) (api.UsersUserIDPutRes, error) {
 	// TODO: APIの処理を実装
-	return &api.User{}, nil
-}
+	userID := params.UserID
 
-func (h *Handler) UsersUserIDDelete(ctx context.Context, params api.UsersUserIDDeleteParams) (api.UsersUserIDDeleteRes, error) {
+	// 更新ビルダーを作成
+	update := h.client.User.UpdateOneID(userID).SetName(req.Name)
 
-	return &api.UsersUserIDDeleteNoContent{}, nil
+	// オプション型のBirthdayをチェックして設定
+	if req.Birthday.IsSet() {
+		update.SetBirthday(req.Birthday.Value) // req.Birthday.Value は time.Time
+	}
+
+	// 他のオプション型も同様（Hometown, Bioなど）
+	if req.Hometown.IsSet() {
+		update.SetHometown(req.Hometown.Value)
+	}
+	if req.Bio.IsSet() {
+		update.SetBio(req.Bio.Value)
+	}
+
+	// 更新を実行
+	updatedUser, err := update.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// レスポンス構築（UsersUserIDGetと同様）
+	genreIDs, err := updatedUser.QueryGenres().IDs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var birthday api.OptDate
+	if updatedUser.Birthday != nil {
+		birthday = api.NewOptDate(*updatedUser.Birthday)
+	}
+
+	var hometown api.OptString
+	if updatedUser.Hometown != nil {
+		hometown = api.NewOptString(*updatedUser.Hometown)
+	}
+
+	var bio api.OptString
+	if updatedUser.Bio != nil {
+		bio = api.NewOptString(*updatedUser.Bio)
+	}
+
+	res := api.User{
+		ID:       updatedUser.ID,
+		Name:     updatedUser.Name,
+		Birthday: birthday,
+		Genres:   genreIDs,
+		Hometown: hometown,
+		Bio:      bio,
+	}
+
+	return &res, nil
 }
 
 // UsersUserIDIconDelete implements DELETE /users/{user_id}/icon operation.
