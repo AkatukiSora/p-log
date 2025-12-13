@@ -106,7 +106,10 @@ func (c *JwtHandler) isRefreshTokenValid(token string, ctx context.Context) (boo
 	count, err := c.client.RefreshToken.Query().
 		Where(
 			refreshtoken.TokenHashEQ(tokenHash),
-			refreshtoken.ExpiresAtGT(time.Now()),
+			refreshtoken.Or(
+				refreshtoken.ExpiresAtGT(time.Now()),
+				refreshtoken.RevokedEQ(false),
+			),
 		).
 		Count(ctx)
 	if err != nil {
@@ -137,7 +140,7 @@ func (c *JwtHandler) generateAccessToken(userID, email string) (string, error) {
 }
 
 // GenerateRefreshToken はリフレッシュトークンを生成します。
-func (c *JwtHandler) generateRefreshToken(userID, email string) (string, error) {
+func (c *JwtHandler) generateRefreshToken(userID, email string, ctx context.Context) (string, error) {
 	now := time.Now()
 
 	claims := JWTClaims{
@@ -160,7 +163,7 @@ func (c *JwtHandler) generateRefreshToken(userID, email string) (string, error) 
 	}
 
 	// リフレッシュトークンをデータベースに保存
-	err = c.storeRefreshToken(tokenString, uuid.MustParse(userID), now.Add(c.jwtConfig.RefreshTokenDuration), context.Background())
+	err = c.storeRefreshToken(tokenString, uuid.MustParse(userID), now.Add(c.jwtConfig.RefreshTokenDuration), ctx)
 	if err != nil {
 		return "", err
 	}
@@ -210,13 +213,13 @@ func (c *JwtHandler) ValidateToken(tokenString string) (*JWTClaims, error) {
 }
 
 // GenerateTokens はアクセストークンとリフレッシュトークンを生成します。
-func (c *JwtHandler) GenerateTokens(userID, email string) (accessToken string, refreshToken string, err error) {
+func (c *JwtHandler) GenerateTokens(userID, email string, ctx context.Context) (accessToken string, refreshToken string, err error) {
 	accessToken, err = c.generateAccessToken(userID, email)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err = c.generateRefreshToken(userID, email)
+	refreshToken, err = c.generateRefreshToken(userID, email, ctx)
 	if err != nil {
 		return "", "", err
 	}
