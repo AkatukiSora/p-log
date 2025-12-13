@@ -48,7 +48,7 @@ services:
     environment:
       SWAGGER_JSON: "/openapi.yaml"
       # SwaggerUIからブラウザ経由でAPIにアクセスするため、URLはホストのlocalhostを指定
-      BASE_URL: ""
+      # BASE_URL: "" # 空文字列はnginxのエラーを引き起こすためコメントアウト
       # クロスオリジンリクエストを許可
       VALIDATOR_URL: "null"
     volumes:
