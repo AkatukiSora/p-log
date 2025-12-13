@@ -228,9 +228,9 @@ func (c *JwtHandler) GenerateTokens(userID, email string, ctx context.Context) (
 }
 
 // RefreshAccessToken はリフレッシュトークンを検証し、新しいアクセストークンを生成します。
-func (c *JwtHandler) RefreshAccessToken(refreshToken string) (string, error) {
+func (c *JwtHandler) RefreshAccessToken(refreshToken string, ctx context.Context) (string, error) {
 	// リフレッシュトークンが有効か確認
-	isValid, err := c.isRefreshTokenValid(refreshToken, context.Background())
+	isValid, err := c.isRefreshTokenValid(refreshToken, ctx)
 	if err != nil {
 		return "", err
 	}
@@ -247,7 +247,7 @@ func (c *JwtHandler) RefreshAccessToken(refreshToken string) (string, error) {
 }
 
 // RevokeRefreshToken はリフレッシュトークンを無効化します。
-func (c *JwtHandler) RevokeRefreshToken(refreshToken string) error {
+func (c *JwtHandler) RevokeRefreshToken(refreshToken string, ctx context.Context) error {
 	// トークンのハッシュを計算
 	tokenHashByte := sha512.Sum512([]byte(refreshToken))
 	tokenHash := hex.EncodeToString(tokenHashByte[:])
