@@ -1,17 +1,9 @@
-.options{
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5%;
-}
-
 .option{
+    padding: 5px;
     font-size: 20px;
     width: 14vw;
     line-height: 20px;
     text-align: center;
-    border: 3px solid #FFF;
     border-radius: 30px;
     transition: 0.5s;
     background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
@@ -23,6 +15,16 @@
     line-height: 35px;
 }
 
-.link{
-    text-decoration: none;
+li{
+    font-size: 15px;
+    width: 14vw;
+    line-height: 20px;
+    text-align: center;
+    border: 3px solid #FFF;
+    border-radius: 30px;
+    transition: 0.5s;
+}
+
+small{
+    font-size: 10px;
 }
