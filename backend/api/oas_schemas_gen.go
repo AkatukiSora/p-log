@@ -33,7 +33,19 @@ func (s *AuthCallbackGetNoContent) SetSetCookie(val OptString) {
 func (*AuthCallbackGetNoContent) authCallbackGetRes() {}
 
 // AuthLoginGetMovedPermanently is response for AuthLoginGet operation.
-type AuthLoginGetMovedPermanently struct{}
+type AuthLoginGetMovedPermanently struct {
+	Location OptString
+}
+
+// GetLocation returns the value of Location.
+func (s *AuthLoginGetMovedPermanently) GetLocation() OptString {
+	return s.Location
+}
+
+// SetLocation sets the value of Location.
+func (s *AuthLoginGetMovedPermanently) SetLocation(val OptString) {
+	s.Location = val
+}
 
 // AuthLogoutPostNoContent is response for AuthLogoutPost operation.
 type AuthLogoutPostNoContent struct{}

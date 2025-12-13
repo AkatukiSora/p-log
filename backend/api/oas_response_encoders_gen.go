@@ -61,6 +61,25 @@ func encodeAuthCallbackGetResponse(response AuthCallbackGetRes, w http.ResponseW
 }
 
 func encodeAuthLoginGetResponse(response *AuthLoginGetMovedPermanently, w http.ResponseWriter, span trace.Span) error {
+	// Encoding response headers.
+	{
+		h := uri.NewHeaderEncoder(w.Header())
+		// Encode "Location" header.
+		{
+			cfg := uri.HeaderParameterEncodingConfig{
+				Name:    "Location",
+				Explode: false,
+			}
+			if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+				if val, ok := response.Location.Get(); ok {
+					return e.EncodeValue(conv.StringToString(val))
+				}
+				return nil
+			}); err != nil {
+				return errors.Wrap(err, "encode Location header")
+			}
+		}
+	}
 	w.WriteHeader(301)
 	span.SetStatus(codes.Ok, http.StatusText(301))
 

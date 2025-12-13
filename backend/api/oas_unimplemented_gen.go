@@ -27,8 +27,8 @@ func (UnimplementedHandler) AuthCallbackGet(ctx context.Context, params AuthCall
 // OIDCログインを開始.
 //
 // GET /auth/login
-func (UnimplementedHandler) AuthLoginGet(ctx context.Context) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) AuthLoginGet(ctx context.Context) (r *AuthLoginGetMovedPermanently, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // AuthLogoutPost implements POST /auth/logout operation.

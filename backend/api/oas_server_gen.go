@@ -19,7 +19,7 @@ type Handler interface {
 	// OIDCログインを開始.
 	//
 	// GET /auth/login
-	AuthLoginGet(ctx context.Context) error
+	AuthLoginGet(ctx context.Context) (*AuthLoginGetMovedPermanently, error)
 	// AuthLogoutPost implements POST /auth/logout operation.
 	//
 	// ログアウト.

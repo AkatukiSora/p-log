@@ -38,7 +38,7 @@ type Invoker interface {
 	// OIDCログインを開始.
 	//
 	// GET /auth/login
-	AuthLoginGet(ctx context.Context) error
+	AuthLoginGet(ctx context.Context) (*AuthLoginGetMovedPermanently, error)
 	// AuthLogoutPost invokes POST /auth/logout operation.
 	//
 	// ログアウト.
@@ -391,9 +391,9 @@ func (c *Client) sendAuthCallbackGet(ctx context.Context, params AuthCallbackGet
 // OIDCログインを開始.
 //
 // GET /auth/login
-func (c *Client) AuthLoginGet(ctx context.Context) error {
-	_, err := c.sendAuthLoginGet(ctx)
-	return err
+func (c *Client) AuthLoginGet(ctx context.Context) (*AuthLoginGetMovedPermanently, error) {
+	res, err := c.sendAuthLoginGet(ctx)
+	return res, err
 }
 
 func (c *Client) sendAuthLoginGet(ctx context.Context) (res *AuthLoginGetMovedPermanently, err error) {

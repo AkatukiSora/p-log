@@ -286,12 +286,12 @@ func (s *Server) handleAuthLoginGetRequest(args [0]string, argsEscaped bool, w h
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.AuthLoginGet(ctx)
+				response, err = s.h.AuthLoginGet(ctx)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.AuthLoginGet(ctx)
+		response, err = s.h.AuthLoginGet(ctx)
 	}
 	if err != nil {
 		if errRes, ok := errors.Into[*GeneralErrorStatusCode](err); ok {

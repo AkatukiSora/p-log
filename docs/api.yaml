@@ -5,7 +5,6 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:8080/api/v1
-    description: Local development server
 
 paths:
   # Auth
@@ -18,6 +17,11 @@ paths:
           $ref: '#/components/responses/GeneralError'
         '301':
           description: OIDCプロバイダーへのリダイレクト
+          headers:
+            Location:
+              schema:
+                type: string
+              description: OIDCプロバイダーの認証URL
 
   /auth/callback:
     get:

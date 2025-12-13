@@ -145,7 +145,46 @@ func decodeAuthLoginGetResponse(resp *http.Response) (res *AuthLoginGetMovedPerm
 	switch resp.StatusCode {
 	case 301:
 		// Code 301.
-		return &AuthLoginGetMovedPermanently{}, nil
+		var wrapper AuthLoginGetMovedPermanently
+		h := uri.NewHeaderDecoder(resp.Header)
+		// Parse "Location" header.
+		{
+			cfg := uri.HeaderParameterDecodingConfig{
+				Name:    "Location",
+				Explode: false,
+			}
+			if err := func() error {
+				if err := h.HasParam(cfg); err == nil {
+					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+						var wrapperDotLocationVal string
+						if err := func() error {
+							val, err := d.DecodeValue()
+							if err != nil {
+								return err
+							}
+
+							c, err := conv.ToString(val)
+							if err != nil {
+								return err
+							}
+
+							wrapperDotLocationVal = c
+							return nil
+						}(); err != nil {
+							return err
+						}
+						wrapper.Location.SetTo(wrapperDotLocationVal)
+						return nil
+					}); err != nil {
+						return err
+					}
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "parse Location header")
+			}
+		}
+		return &wrapper, nil
 	}
 	// Convenient error response.
 	defRes, err := func() (res *GeneralErrorStatusCode, err error) {
