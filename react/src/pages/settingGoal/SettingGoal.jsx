@@ -1,6 +1,6 @@
 import { useState } from "react"
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
-import GoalsData from "../../components/GoalsData/GoalsData"
+import GoalsData from "../../components/goalsData/GoalsData"
 import styles from "./SettingGoal.module.css"
 
 export default function SettingGoal() {
