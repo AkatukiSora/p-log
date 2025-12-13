@@ -1,51 +1,27 @@
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 import ButtonTopFriendOption from "../../components/button/buttonTopFriendOption/ButtonTopFriendOption.jsx"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styles from "./friendGoalsList.module.css"
-export default function friendGoalsList() {
-    const goalsList = [
-{
-  userId:2,
-  id:1,
-  content:"筋トレ",
-  limit:new Date("2026-7-31"),
-  progress:[
-    {
-    title:"プランク10分",
-    date:new Date("2025-8-2"),
-    },
-    {
-    title:"スクワット10回",
-    date:new Date("2025-9-17"),
-    },
-],
-},
-{
-  userId:2,
-  id:2,
-  content:"G検定合格",
-  limit:new Date("2026-5-1"),
-  progress:[
-    {
-      title:"黒本100問",
-      date:new Date("2025-9-30"),
-    },
-    {
-      title:"あんちょこ作成",
-      date:new Date("2025-10-22"),
-    },
-  ],
-},
-{
-  userId:1,
-  id:3,
-  content:"課題",
-  limit:new Date("2025-12-31"),
-  progress:[],
-}
-];
-    const [friendGoals,setFriendGoals]=useState(goalsList);
 
+const API_BASE_URL = 'http://localhost:8080/api/v1';
+const MOCK_TOKEN = 'mock_access_token';
+const friend_id = "223e4567-e89b-12d3-a456-426614174001"
+
+export default function friendGoalsList() {
+
+    const [friendGoals,setFriendGoals]=useState([]);
+    useEffect(()=>{
+        const fetchGoals=async()=>{
+          const res = await fetch(`${API_BASE_URL}/users/${friend_id}/goals`,{
+            headers: {
+              "Authorization":`Bearer ${MOCK_TOKEN}`,
+            },
+          });
+          const data = await res.json();
+          setFriendGoals(data);
+        }
+        fetchGoals();
+      },[]);
     // フレンドの目標一覧
   return (
     <>
@@ -55,22 +31,19 @@ export default function friendGoalsList() {
             <ButtonTopFriendOption />
         </header>
         <main className="main friendMain">
-            <div>
+            <div className={styles.default}>
                     {friendGoals.map((goal)=>{
                             return(
                                 <div key={goal.id}>
                                     <span className={styles.option}>
-                                      {goal.content}
-                                      <small>期限: {new Date(goal.limit).toLocaleDateString()}</small>
+                                      {goal.title}
+                                      <small>期限: {new Date(goal.deadline).toLocaleDateString()}</small>
                                     </span>
-                                    {goal.progress && goal.progress.length > 0 ? (
-                                      <ul>
-                                        {goal.progress.map((pro) => (
-                                          <li key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
-                                        ))}
-                                      </ul>
-                                    ):""
-                                    }
+                                    {/* <ul>
+                                      {goal.progress.map((pro) => (
+                                        <li key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
+                                      ))}
+                                    </ul> */}
                                 </div>
                             )
                     })}

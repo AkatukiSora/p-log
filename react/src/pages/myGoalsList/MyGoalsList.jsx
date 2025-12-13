@@ -1,47 +1,35 @@
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
 import ButtonTopMyOption from "../../components/button/buttonTopMyOption/ButtonTopMyOption"
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import styles from "./MyGoalsList.module.css"
-export const goalsList = [
-{
-  userId:1,
-  id:1,
-  content:"ハッカソン出場",
-  limit:new Date("2025-12-14"),
-  progress:[{
-    title:"ミーティング",
-    date:new Date("2025-12-8"),
-  },],
-},
-{
-  userId:1,
-  id:2,
-  content:"応用情報合格",
-  limit:new Date("2026-4-1"),
-  progress:[
-    {
-      title:"過去問200問やった",
-      date:new Date("2025-10-1"),
-    },
-    {
-      title:"模擬試験",
-      date:new Date("2025-10-12"),
-    },
-  ],
-},
-{
-  userId:1,
-  id:3,
-  content:"雀豪",
-  limit:new Date("2026-12-31"),
-  progress:[],
-}
-];
+
+const API_BASE_URL = 'http://localhost:8080/api/v1';
+const MOCK_TOKEN = 'mock_access_token';
+
 const MyGoalsList = () => {
     // 自身の目標一覧(ホーム)
+  const [goals,setGoals]=useState([]);
 
-  const [goals,setGoals]=useState(goalsList);
-  const deleteGoal=(id)=>{
+  useEffect(()=>{
+    const fetchGoals=async()=>{
+      const res = await fetch(`${API_BASE_URL}/goals`,{
+        headers: {
+          "Authorization":`Bearer ${MOCK_TOKEN}`,
+        },
+      });
+      const data = await res.json();
+      setGoals(data);
+    }
+    fetchGoals();
+  },[]);
+  const deleteGoal=async(id)=>{
+    const res = await fetch(`${API_BASE_URL}/goals/${id}`,{
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${MOCK_TOKEN}`,
+      },
+    });
     const newGoals=goals.filter((goal)=>{
       return goal.id!==id;
     });
@@ -70,14 +58,14 @@ const MyGoalsList = () => {
                 <div key={goal.id}>
                             <span className={styles.option}>
                               <input type="checkbox" onChange={() => complete(goal.id)}/>
-                              {goal.content}
-                              <small>期限: {new Date(goal.limit).toLocaleDateString()}</small>
+                              {goal.title}
+                              <small>期限: {new Date(goal.deadline).toLocaleDateString()}</small>
                             </span>
-                              <ul>
+                              {/* <ul>
                                 {goal.progress.map((pro) => (
                                   <li className={styles.list} key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
                                 ))}
-                              </ul>
+                              </ul> */}
                             
                         </div>
                     )
