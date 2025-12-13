@@ -51,6 +51,12 @@ type Invoker interface {
 	//
 	// GET /auth/me
 	AuthMeGet(ctx context.Context) (AuthMeGetRes, error)
+	// AuthRefreshPost invokes POST /auth/refresh operation.
+	//
+	// アクセストークンのリフレッシュ.
+	//
+	// POST /auth/refresh
+	AuthRefreshPost(ctx context.Context) (AuthRefreshPostRes, error)
 	// FriendsGet invokes GET /friends operation.
 	//
 	// 自分のフレンド（フォロー）一覧取得.
@@ -171,12 +177,6 @@ type Invoker interface {
 	//
 	// GET /timeline
 	TimelineGet(ctx context.Context, params TimelineGetParams) (TimelineGetRes, error)
-	// UsersPost invokes POST /users operation.
-	//
-	// 新規ユーザー登録.
-	//
-	// POST /users
-	UsersPost(ctx context.Context, request *UserRequest) (UsersPostRes, error)
 	// UsersUserIDDelete invokes DELETE /users/{user_id} operation.
 	//
 	// ユーザーアカウント削除.
@@ -628,6 +628,78 @@ func (c *Client) sendAuthMeGet(ctx context.Context) (res AuthMeGetRes, err error
 
 	stage = "DecodeResponse"
 	result, err := decodeAuthMeGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AuthRefreshPost invokes POST /auth/refresh operation.
+//
+// アクセストークンのリフレッシュ.
+//
+// POST /auth/refresh
+func (c *Client) AuthRefreshPost(ctx context.Context) (AuthRefreshPostRes, error) {
+	res, err := c.sendAuthRefreshPost(ctx)
+	return res, err
+}
+
+func (c *Client) sendAuthRefreshPost(ctx context.Context) (res AuthRefreshPostRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.URLTemplateKey.String("/auth/refresh"),
+	}
+	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, AuthRefreshPostOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/auth/refresh"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeAuthRefreshPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2930,81 +3002,6 @@ func (c *Client) sendTimelineGet(ctx context.Context, params TimelineGetParams) 
 
 	stage = "DecodeResponse"
 	result, err := decodeTimelineGetResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// UsersPost invokes POST /users operation.
-//
-// 新規ユーザー登録.
-//
-// POST /users
-func (c *Client) UsersPost(ctx context.Context, request *UserRequest) (UsersPostRes, error) {
-	res, err := c.sendUsersPost(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendUsersPost(ctx context.Context, request *UserRequest) (res UsersPostRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.URLTemplateKey.String("/users"),
-	}
-	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, UsersPostOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/users"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeUsersPostRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeUsersPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

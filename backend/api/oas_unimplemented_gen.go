@@ -49,6 +49,15 @@ func (UnimplementedHandler) AuthMeGet(ctx context.Context) (r AuthMeGetRes, _ er
 	return r, ht.ErrNotImplemented
 }
 
+// AuthRefreshPost implements POST /auth/refresh operation.
+//
+// アクセストークンのリフレッシュ.
+//
+// POST /auth/refresh
+func (UnimplementedHandler) AuthRefreshPost(ctx context.Context) (r AuthRefreshPostRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // FriendsGet implements GET /friends operation.
 //
 // 自分のフレンド（フォロー）一覧取得.
@@ -226,15 +235,6 @@ func (UnimplementedHandler) PostsPostIDReactionsPost(ctx context.Context, params
 //
 // GET /timeline
 func (UnimplementedHandler) TimelineGet(ctx context.Context, params TimelineGetParams) (r TimelineGetRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UsersPost implements POST /users operation.
-//
-// 新規ユーザー登録.
-//
-// POST /users
-func (UnimplementedHandler) UsersPost(ctx context.Context, req *UserRequest) (r UsersPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

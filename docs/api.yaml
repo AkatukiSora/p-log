@@ -41,13 +41,35 @@ paths:
           $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
-        '200':
+        '204':
           description: 認証成功
-          content:
-            application/json:
+          headers:
+            Set-Cookie:
               schema:
-                $ref: '#/components/schemas/AuthToken'
-
+                type: string
+              description: |
+                以下の2つのHTTPオンリークッキーを設定:
+                - access_token: アクセストークン (HttpOnly, Secure, SameSite=Lax)
+                - refresh_token: リフレッシュトークン (HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth/refresh)
+  /auth/refresh:
+    post:
+      summary: アクセストークンのリフレッシュ
+      tags: [Auth]
+      responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        default:
+          $ref: '#/components/responses/GeneralError'
+        '204':
+          description: トークンリフレッシュ成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: |
+                以下の2つのHTTPオンリークッキーを上書き:
+                - access_token: 新しいアクセストークン (HttpOnly, Secure, SameSite=Lax)
+                - refresh_token: 新しいリフレッシュトークン (HttpOnly, Secure, SameSite=Lax, Path=/api/v1/auth/refresh)
   /auth/logout:
     post:
       summary: ログアウト
@@ -95,28 +117,6 @@ paths:
                   $ref: '#/components/schemas/Genre'
 
   # User / Icon
-  /users:
-    post:
-      summary: 新規ユーザー登録
-      tags: [User]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRequest'
-      responses:
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        default:
-          $ref: '#/components/responses/GeneralError'
-        '201':
-          description: ユーザー作成完了
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-
   /users/{user_id}:
     get:
       summary: ユーザープロフィール取得
@@ -915,21 +915,6 @@ components:
       properties:
         message:
           type: string
-
-    AuthToken:
-      type: object
-      required: [access_token, token_type, expires_in]
-      properties:
-        access_token:
-          type: string
-        token_type:
-          type: string
-        refresh_token:
-          type: string
-        expires_in:
-          description: access_tokenの有効期限（秒）
-          type: string
-          format: date-time
 
     User:
       type: object

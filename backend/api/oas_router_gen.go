@@ -167,6 +167,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
+				case 'r': // Prefix: "refresh"
+
+					if l := len("refresh"); len(elem) >= l && elem[0:l] == "refresh" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleAuthRefreshPostRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
 				}
 
 			case 'f': // Prefix: "friends"
@@ -484,20 +504,39 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-			case 'u': // Prefix: "users"
+			case 'u': // Prefix: "users/"
 
-				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+				if l := len("users/"); len(elem) >= l && elem[0:l] == "users/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
+				// Param: "user_id"
+				// Match until "/"
+				idx := strings.IndexByte(elem, '/')
+				if idx < 0 {
+					idx = len(elem)
+				}
+				args[0] = elem[:idx]
+				elem = elem[idx:]
+
 				if len(elem) == 0 {
 					switch r.Method {
-					case "POST":
-						s.handleUsersPostRequest([0]string{}, elemIsEscaped, w, r)
+					case "DELETE":
+						s.handleUsersUserIDDeleteRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
+					case "GET":
+						s.handleUsersUserIDGetRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
+					case "PUT":
+						s.handleUsersUserIDPutRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "POST")
+						s.notAllowed(w, r, "DELETE,GET,PUT")
 					}
 
 					return
@@ -511,144 +550,104 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						break
 					}
 
-					// Param: "user_id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
 					if len(elem) == 0 {
-						switch r.Method {
-						case "DELETE":
-							s.handleUsersUserIDDeleteRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "GET":
-							s.handleUsersUserIDGetRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "PUT":
-							s.handleUsersUserIDPutRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "DELETE,GET,PUT")
-						}
-
-						return
+						break
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/"
+					case 'f': // Prefix: "friends"
 
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						if l := len("friends"); len(elem) >= l && elem[0:l] == "friends" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleUsersUserIDFriendsGetRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+
+					case 'g': // Prefix: "goals"
+
+						if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
+							elem = elem[l:]
+						} else {
 							break
 						}
-						switch elem[0] {
-						case 'f': // Prefix: "friends"
 
-							if l := len("friends"); len(elem) >= l && elem[0:l] == "friends" {
-								elem = elem[l:]
-							} else {
-								break
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleUsersUserIDGoalsGetRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
 							}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleUsersUserIDFriendsGetRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
+							return
+						}
 
-								return
+					case 'i': // Prefix: "icon"
+
+						if l := len("icon"); len(elem) >= l && elem[0:l] == "icon" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "DELETE":
+								s.handleUsersUserIDIconDeleteRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleUsersUserIDIconGetRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "POST":
+								s.handleUsersUserIDIconPostRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,POST")
 							}
 
-						case 'g': // Prefix: "goals"
+							return
+						}
 
-							if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
-								elem = elem[l:]
-							} else {
-								break
+					case 'p': // Prefix: "posts"
+
+						if l := len("posts"); len(elem) >= l && elem[0:l] == "posts" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleUsersUserIDPostsGetRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
 							}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleUsersUserIDGoalsGetRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-
-						case 'i': // Prefix: "icon"
-
-							if l := len("icon"); len(elem) >= l && elem[0:l] == "icon" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "DELETE":
-									s.handleUsersUserIDIconDeleteRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								case "GET":
-									s.handleUsersUserIDIconGetRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								case "POST":
-									s.handleUsersUserIDIconPostRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "DELETE,GET,POST")
-								}
-
-								return
-							}
-
-						case 'p': // Prefix: "posts"
-
-							if l := len("posts"); len(elem) >= l && elem[0:l] == "posts" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleUsersUserIDPostsGetRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-
+							return
 						}
 
 					}
@@ -873,6 +872,31 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							r.operationID = ""
 							r.operationGroup = ""
 							r.pathPattern = "/auth/me"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 'r': // Prefix: "refresh"
+
+					if l := len("refresh"); len(elem) >= l && elem[0:l] == "refresh" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = AuthRefreshPostOperation
+							r.summary = "アクセストークンのリフレッシュ"
+							r.operationID = ""
+							r.operationGroup = ""
+							r.pathPattern = "/auth/refresh"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1294,24 +1318,51 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-			case 'u': // Prefix: "users"
+			case 'u': // Prefix: "users/"
 
-				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+				if l := len("users/"); len(elem) >= l && elem[0:l] == "users/" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
+				// Param: "user_id"
+				// Match until "/"
+				idx := strings.IndexByte(elem, '/')
+				if idx < 0 {
+					idx = len(elem)
+				}
+				args[0] = elem[:idx]
+				elem = elem[idx:]
+
 				if len(elem) == 0 {
 					switch method {
-					case "POST":
-						r.name = UsersPostOperation
-						r.summary = "新規ユーザー登録"
+					case "DELETE":
+						r.name = UsersUserIDDeleteOperation
+						r.summary = "ユーザーアカウント削除"
 						r.operationID = ""
 						r.operationGroup = ""
-						r.pathPattern = "/users"
+						r.pathPattern = "/users/{user_id}"
 						r.args = args
-						r.count = 0
+						r.count = 1
+						return r, true
+					case "GET":
+						r.name = UsersUserIDGetOperation
+						r.summary = "ユーザープロフィール取得"
+						r.operationID = ""
+						r.operationGroup = ""
+						r.pathPattern = "/users/{user_id}"
+						r.args = args
+						r.count = 1
+						return r, true
+					case "PUT":
+						r.name = UsersUserIDPutOperation
+						r.summary = "ユーザープロフィール更新"
+						r.operationID = ""
+						r.operationGroup = ""
+						r.pathPattern = "/users/{user_id}"
+						r.args = args
+						r.count = 1
 						return r, true
 					default:
 						return
@@ -1326,179 +1377,126 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						break
 					}
 
-					// Param: "user_id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
 					if len(elem) == 0 {
-						switch method {
-						case "DELETE":
-							r.name = UsersUserIDDeleteOperation
-							r.summary = "ユーザーアカウント削除"
-							r.operationID = ""
-							r.operationGroup = ""
-							r.pathPattern = "/users/{user_id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "GET":
-							r.name = UsersUserIDGetOperation
-							r.summary = "ユーザープロフィール取得"
-							r.operationID = ""
-							r.operationGroup = ""
-							r.pathPattern = "/users/{user_id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "PUT":
-							r.name = UsersUserIDPutOperation
-							r.summary = "ユーザープロフィール更新"
-							r.operationID = ""
-							r.operationGroup = ""
-							r.pathPattern = "/users/{user_id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
+						break
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/"
+					case 'f': // Prefix: "friends"
 
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						if l := len("friends"); len(elem) >= l && elem[0:l] == "friends" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = UsersUserIDFriendsGetOperation
+								r.summary = "ユーザーのフレンド（フォロー）一覧取得"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/friends"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'g': // Prefix: "goals"
+
+						if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
+							elem = elem[l:]
+						} else {
 							break
 						}
-						switch elem[0] {
-						case 'f': // Prefix: "friends"
 
-							if l := len("friends"); len(elem) >= l && elem[0:l] == "friends" {
-								elem = elem[l:]
-							} else {
-								break
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = UsersUserIDGoalsGetOperation
+								r.summary = "指定ユーザーの目標一覧取得"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/goals"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
 							}
+						}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "GET":
-									r.name = UsersUserIDFriendsGetOperation
-									r.summary = "ユーザーのフレンド（フォロー）一覧取得"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/friends"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
+					case 'i': // Prefix: "icon"
+
+						if l := len("icon"); len(elem) >= l && elem[0:l] == "icon" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "DELETE":
+								r.name = UsersUserIDIconDeleteOperation
+								r.summary = "ユーザーアイコン削除"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/icon"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = UsersUserIDIconGetOperation
+								r.summary = "ユーザーアイコン画像取得"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/icon"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "POST":
+								r.name = UsersUserIDIconPostOperation
+								r.summary = "ユーザーアイコンのアップロードまたは置換"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/icon"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
 							}
+						}
 
-						case 'g': // Prefix: "goals"
+					case 'p': // Prefix: "posts"
 
-							if l := len("goals"); len(elem) >= l && elem[0:l] == "goals" {
-								elem = elem[l:]
-							} else {
-								break
+						if l := len("posts"); len(elem) >= l && elem[0:l] == "posts" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = UsersUserIDPostsGetOperation
+								r.summary = "指定ユーザーの投稿一覧取得"
+								r.operationID = ""
+								r.operationGroup = ""
+								r.pathPattern = "/users/{user_id}/posts"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
 							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "GET":
-									r.name = UsersUserIDGoalsGetOperation
-									r.summary = "指定ユーザーの目標一覧取得"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/goals"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
-						case 'i': // Prefix: "icon"
-
-							if l := len("icon"); len(elem) >= l && elem[0:l] == "icon" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "DELETE":
-									r.name = UsersUserIDIconDeleteOperation
-									r.summary = "ユーザーアイコン削除"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/icon"
-									r.args = args
-									r.count = 1
-									return r, true
-								case "GET":
-									r.name = UsersUserIDIconGetOperation
-									r.summary = "ユーザーアイコン画像取得"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/icon"
-									r.args = args
-									r.count = 1
-									return r, true
-								case "POST":
-									r.name = UsersUserIDIconPostOperation
-									r.summary = "ユーザーアイコンのアップロードまたは置換"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/icon"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
-						case 'p': // Prefix: "posts"
-
-							if l := len("posts"); len(elem) >= l && elem[0:l] == "posts" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "GET":
-									r.name = UsersUserIDPostsGetOperation
-									r.summary = "指定ユーザーの投稿一覧取得"
-									r.operationID = ""
-									r.operationGroup = ""
-									r.pathPattern = "/users/{user_id}/posts"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-
 						}
 
 					}
