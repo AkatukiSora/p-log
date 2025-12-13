@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption.jsx"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 import ButtonTopMyOption from "../../components/button/buttonTopMyOption/ButtonTopMyOption.jsx"
 
 export default function MyProfile() {

@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption.jsx"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 import ButtonTopFriendOption from "../../components/button/buttonTopFriendOption/ButtonTopFriendOption.jsx"
 
 export default function FriendProfile() {

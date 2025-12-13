@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
 import ButtonTopMyOption from "../../components/button/buttonTopMyOption/ButtonTopMyOption"
 import { useState } from 'react'
 import styles from "./MyGoalsList.module.css"

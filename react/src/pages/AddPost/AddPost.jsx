@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption.jsx"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 import styles from "./AddPost.module.css"
 
 // const goalsList = [

@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components//button/buttonBottomOption/h/ButtonBottomOption.jsx"
+import ButtonBottomOption from "../../components//button/buttonBottomOption/ButtonBottomOption.jsx"
 import { useState } from "react"
 import styles from "./TimeLine.module.css"
 export default function TimeLine() {

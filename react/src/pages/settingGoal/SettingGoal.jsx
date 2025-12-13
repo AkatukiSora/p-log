@@ -1,4 +1,4 @@
-import ButtonBottomOption from "../../components/button/buttonBottomOption/h/ButtonBottomOption.jsx"
+import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 
 export default function SettingGoal() {
   return (
