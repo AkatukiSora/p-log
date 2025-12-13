@@ -1,6 +1,8 @@
 import ButtonBottomOption from "../../components//button/buttonBottomOption/ButtonBottomOption.jsx"
 import { useState } from "react"
 import styles from "./TimeLine.module.css"
+import {BsEmojiNeutral} from "react-icons/bs"
+import { BsEmojiGrinFill } from "react-icons/bs";
 export default function TimeLine() {
   const postsList = [
     {
@@ -74,7 +76,7 @@ export default function TimeLine() {
         <h1>タイムライン</h1>
       </header>
       <main className="main">
-        <div>
+        <div className={styles.default}>
           {postsList.map((post)=>{
             const user = users[post.userId];
             const Liked = userLiked[post.id]
@@ -87,11 +89,12 @@ export default function TimeLine() {
                   <div>
                     <div className={styles.option}>{post.title}</div>
                   <div className={styles.post}>
-                    <div>{post.content}<small>({new Date(post.date).toLocaleDateString()})</small></div>
+                    <div className={styles.p}>{post.content}<small>({new Date(post.date).toLocaleDateString()})</small></div>
                     <button
                       onClick={() => handleLikeToggle(post.id)}
+                      className={styles.button}
                     >
-                      {Liked ? '♥' : '♡'}{likeCounts[post.id]}
+                      {Liked ? <BsEmojiGrinFill/> : <BsEmojiNeutral />}{likeCounts[post.id]}
                     </button>
                   </div>
                   </div>

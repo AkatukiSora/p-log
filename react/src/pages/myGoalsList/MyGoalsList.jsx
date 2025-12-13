@@ -63,24 +63,26 @@ const MyGoalsList = () => {
         <ButtonTopMyOption />
       </header>
       <main className="main myMain">
-        <div>
-        {goals.map((goal)=>{
-                return(
-                    <div key={goal.id}>
-                        <span className={styles.option}>
-                          <input type="checkbox" onChange={() => complete(goal.id)}/>
-                          {goal.content}
-                          <small>期限: {new Date(goal.limit).toLocaleDateString()}</small>
-                        </span>
-                          <ul>
-                            {goal.progress.map((pro) => (
-                              <li key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
-                            ))}
-                          </ul>
-                        
-                    </div>
-                )
-        })}
+        <div className={styles.default}>
+          <div>         
+            {goals.map((goal)=>{
+              return(
+                <div key={goal.id}>
+                            <span className={styles.option}>
+                              <input type="checkbox" onChange={() => complete(goal.id)}/>
+                              {goal.content}
+                              <small>期限: {new Date(goal.limit).toLocaleDateString()}</small>
+                            </span>
+                              <ul>
+                                {goal.progress.map((pro) => (
+                                  <li className={styles.list} key={pro.date}>{pro.title} <small>({new Date(pro.date).toLocaleDateString()})</small></li>
+                                ))}
+                              </ul>
+                            
+                        </div>
+                    )
+                  })}
+              </div>
         </div>
       </main>
       <footer>

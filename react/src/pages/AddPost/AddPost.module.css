@@ -1,15 +1,16 @@
 .option{
-    justify-content: center;
-    align-items: center;
-    padding: 5px;
-    font-size: 15px;
     width: 12vw;
     line-height: 20px;
+    margin: 0 auto;
+    padding: 5px;
+    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+    font-size: 15px;
+    color: white;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     border-radius: 30px;
     transition: 0.5s;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    color: white;
 }
 
 .option:hover{
@@ -17,22 +18,13 @@
     line-height: 35px;
 }
 
-li{
-    font-size: 15px;
-    width: 14vw;
-    line-height: 20px;
-    text-align: center;
-    border: 3px solid #FFF;
-    border-radius: 30px;
-    transition: 0.5s;
-}
 
 small{
     font-size: 10px;
 }
 
 
-button {
+.button {
     border-radius: 50%;
     border: none;
     background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
@@ -44,12 +36,19 @@ button {
     align-self: flex-end;
     color:white;
     font-size: 10px;
+    transition: 0.5s;
+}
+.button:hover{
+    width: 4.5vw;
+    height: 3vw;
 }
 
 .post{
+    height: 100px;
     display: flex;
-    gap: 2rem;
-    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
 }
 
 .post > :first-child {
@@ -60,5 +59,16 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  align-self: flex-start;
+
 }
+
+.test{
+    position: relative;
+    top:100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+}
+

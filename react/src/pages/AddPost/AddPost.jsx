@@ -71,7 +71,10 @@ export default function AddPost() {
   const [postImageUrl,setImageUrl]=useState("");
 
   const addProgress=(e)=>{
-    
+    if(postContent === "" || postPercent === ""){
+      alert("新しい進捗を入力してください")
+      return
+    }
     e.preventDefault();
     const newProgress={
       title:postContent,
@@ -109,7 +112,7 @@ export default function AddPost() {
         <header className="header">
             <h1>進捗の投稿</h1>
         </header>
-        <main className="main">
+        <main className="main addPostMain">
           <div>
               <div className={styles.post}>
                 {initGoals.map((goal)=>{
@@ -127,9 +130,9 @@ export default function AddPost() {
               </div>
           </div>
                       {selectedGoalId !== null && selectedGoal && (
-          <div>
-            <h2 className={styles.option}>{selectedGoal.title}</h2>
+          <div className={styles.test}>
               <div>
+                <h2 className={styles.option}>{selectedGoal.title}</h2>
                 <p>投稿文</p>
                 <form onSubmit={addProgress}>
                   <input
@@ -139,18 +142,18 @@ export default function AddPost() {
                   />
                   <p>進捗率</p>
                   <input
-                    type="number"
+                    type="range"
                     min="0"
                     max="100"
                     value={postPercent}
                     onChange={(e) => setPostPercent(e.target.value)}
-                  /><span>%</span><br />
+                  /><span>{postPercent}%</span><br />
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setImageUrl(e.target.files[0] ? e.target.files[0].name : "")}
                   />
-                  <button>投稿</button>
+                  <button className={styles.button}>投稿</button>
                 </form>
               </div>
           </div>
