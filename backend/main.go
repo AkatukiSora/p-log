@@ -10,8 +10,9 @@ import (
 	"backend/internal/db"
 	"backend/internal/jwt"
 	"backend/security"
-	_ "github.com/lib/pq"
 	"net/http"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -45,8 +46,11 @@ func main() {
 	}
 
 	// サーバーの起動
-	log.Println("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", srv); err != nil {
+	mux := http.NewServeMux()
+	mux.Handle("/api/v1/", http.StripPrefix("/api/v1", srv))
+
+	log.Println("Starting server on :8080 with prefix /api/v1")
+	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("failed to start server: %v", err)
 	}
 }
