@@ -1,6 +1,6 @@
-import { useState } from "react";
-import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
-import styles from "./AddPost.module.css"
+import { useState } from 'react';
+import ButtonBottomOption from '../../components/button/buttonBottomOption/ButtonBottomOption.jsx';
+import styles from './AddPost.module.css';
 
 // const goalsList = [
 // {
@@ -38,130 +38,128 @@ import styles from "./AddPost.module.css"
 // }
 // ];
 
-const initGoals=[
+const initGoals = [
   {
-    id:1,
-    title:"個人開発する",
-    progress:[
+    id: 1,
+    title: '個人開発する',
+    progress: [
       {
-        title:"デザイン作成",
+        title: 'デザイン作成',
         percentage: 80,
-        imageUrl:""
-      }
+        imageUrl: '',
+      },
     ],
   },
   {
-    id:2,
-    title:"ハッカソン参加",
-    progress:[
+    id: 2,
+    title: 'ハッカソン参加',
+    progress: [
       {
-        title:"アイデア出し",
+        title: 'アイデア出し',
         percentage: 50,
-        imageUrl:""
-      }
+        imageUrl: '',
+      },
     ],
   },
-]
+];
 
 export default function AddPost() {
-  const [goals,setGoals]=useState(initGoals);
-  const [selectedGoalId,setSelectedGoalId]=useState(null);
-  const [postContent,setPostContent]=useState("");
-  const [postPercent,setPostPercent]=useState(0);
-  const [postImageUrl,setImageUrl]=useState("");
+  const [goals, setGoals] = useState(initGoals);
+  const [selectedGoalId, setSelectedGoalId] = useState(null);
+  const [postContent, setPostContent] = useState('');
+  const [postPercent, setPostPercent] = useState(0);
+  const [postImageUrl, setImageUrl] = useState('');
 
-  const addProgress=(e)=>{
-    if(postContent === "" || postPercent === ""){
-      alert("新しい進捗を入力してください")
-      return
+  const addProgress = (e) => {
+    if (postContent === '' || postPercent === '') {
+      alert('新しい進捗を入力してください');
+      return;
     }
     e.preventDefault();
-    const newProgress={
-      title:postContent,
-      percentage:postPercent,
+    const newProgress = {
+      title: postContent,
+      percentage: postPercent,
       imageUrl: postImageUrl,
     };
     setGoals(
-      goals.map((goal)=>{
-        if(goal.id===selectedGoalId){
+      goals.map((goal) => {
+        if (goal.id === selectedGoalId) {
           return {
             ...goal,
-            progress:
-              [
-                ...goal.progress,newProgress
-              ]  ,
+            progress: [...goal.progress, newProgress],
           };
-      }
-      return goal;
-  }))
-  setSelectedGoalId(null); 
-  setPostContent("");
-  setPostPercent(0);
-  setImageUrl("");
-  }
+        }
+        return goal;
+      })
+    );
+    setSelectedGoalId(null);
+    setPostContent('');
+    setPostPercent(0);
+    setImageUrl('');
+  };
 
-  const selectedGoal = goals.find(g => g.id === selectedGoalId)
+  const selectedGoal = goals.find((g) => g.id === selectedGoalId);
 
   const openForm = (id) => {
-    setSelectedGoalId(id)
-  }
+    setSelectedGoalId(id);
+  };
 
   return (
     <>
-        <title>進捗の投稿</title>
-        <header className="header">
-            <h1>進捗の投稿</h1>
-        </header>
-        <main className="main addPostMain">
-          <div>
-              <div className={styles.post}>
-                {initGoals.map((goal)=>{
-                  return(
-                    <div key={goal.id}>
-                      <div className={styles.option}>
-                        <a onClick={()=>openForm(goal.id)}>
-                        {goal.title}
-                        </a>
-                      </div>
-                      {/* <small>期限: {new Date(goal.limit).toLocaleDateString()}</small> */}
-                    </div>
-                  )
-                })}
-              </div>
+      <title>進捗の投稿</title>
+      <header className="header">
+        <h1>進捗の投稿</h1>
+      </header>
+      <main className="main addPostMain">
+        <div>
+          <div className={styles.post}>
+            {initGoals.map((goal) => {
+              return (
+                <div key={goal.id}>
+                  <div className={styles.option}>
+                    <a onClick={() => openForm(goal.id)}>{goal.title}</a>
+                  </div>
+                  {/* <small>期限: {new Date(goal.limit).toLocaleDateString()}</small> */}
+                </div>
+              );
+            })}
           </div>
-                      {selectedGoalId !== null && selectedGoal && (
+        </div>
+        {selectedGoalId !== null && selectedGoal && (
           <div className={styles.test}>
-              <div>
-                <h2 className={styles.option}>{selectedGoal.title}</h2>
-                <p>投稿文</p>
-                <form onSubmit={addProgress}>
-                  <input
-                    type="text"
-                    value={postContent}
-                    onChange={(e) => setPostContent(e.target.value)}
-                  />
-                  <p>進捗率</p>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={postPercent}
-                    onChange={(e) => setPostPercent(e.target.value)}
-                  /><span>{postPercent}%</span><br />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setImageUrl(e.target.files[0] ? e.target.files[0].name : "")}
-                  />
-                  <button className={styles.button}>投稿</button>
-                </form>
-              </div>
+            <div>
+              <h2 className={styles.option}>{selectedGoal.title}</h2>
+              <p>投稿文</p>
+              <form onSubmit={addProgress}>
+                <input
+                  type="text"
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                />
+                <p>進捗率</p>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={postPercent}
+                  onChange={(e) => setPostPercent(e.target.value)}
+                />
+                <span>{postPercent}%</span>
+                <br />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageUrl(e.target.files[0] ? e.target.files[0].name : '')}
+                />
+                <button className={styles.button}>投稿</button>
+              </form>
+            </div>
           </div>
-            )}
-        </main>
-        <footer>
-            <ButtonBottomOption />
-        </footer>
+        )}
+      </main>
+      <footer>
+        <ButtonBottomOption />
+      </footer>
     </>
-  )
+  );
 }
