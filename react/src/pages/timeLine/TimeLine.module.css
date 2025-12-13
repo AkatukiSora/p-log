@@ -1,25 +1,25 @@
-.option{
-    padding: 5px;
-    font-size: 20px;
-    width: 14vw;
-    line-height: 20px;
-    text-align: center;
-    border: 3px solid #FFF;
-    border-radius: 30px;
-    transition: 0.5s;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    color: white;
+.option {
+  padding: 5px;
+  font-size: 20px;
+  width: 14vw;
+  line-height: 20px;
+  text-align: center;
+  border: 3px solid #fff;
+  border-radius: 30px;
+  transition: 0.5s;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  color: white;
 }
 
-.option:hover{
-    width: 16vw;
-    line-height: 35px;
+.option:hover {
+  width: 16vw;
+  line-height: 35px;
 }
 
-.post{
-    display: flex;
-    gap: 2rem;
-    padding: 1rem;
+.post {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
 }
 
 .post > :first-child {
@@ -32,38 +32,40 @@
 }
 
 .button {
-    border-radius: 50%;
-    border: none;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
-    text-align: center;
-    justify-content: center;
-    width: 5vw;
-    height: 2.5vw;
-    align-self: flex-end;
-    color:white;
-    transition: 0.5s;
-    font-size: 15px;
+  border-radius: 50%;
+  border: none;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.5),
+    0 2px 2px rgba(0, 0, 0, 0.19);
+  text-align: center;
+  justify-content: center;
+  width: 5vw;
+  height: 2.5vw;
+  align-self: flex-end;
+  color: white;
+  transition: 0.5s;
+  font-size: 15px;
 }
 
-.button:hover{
-    width: 4.5vw;
-    height: 3.5vw;
-    line-height: 35px;
+.button:hover {
+  width: 4.5vw;
+  height: 3.5vw;
+  line-height: 35px;
 }
 
-.usericon{
-    width: 4vw;
-    border-radius: 50%;
-    margin-bottom: 5px;
+.usericon {
+  width: 4vw;
+  border-radius: 50%;
+  margin-bottom: 5px;
 }
 
-.default{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.p{
-    align-items: left;
+.p {
+  align-items: left;
 }

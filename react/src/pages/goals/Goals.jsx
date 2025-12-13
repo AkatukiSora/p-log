@@ -17,29 +17,31 @@ const Goals = () => {
     const fetchGoals = async () => {
       const response = await fetch(`${API_BASE_URL}/goals`, {
         headers: {
-          'Authorization': `Bearer ${MOCK_TOKEN}`,
+          Authorization: `Bearer ${MOCK_TOKEN}`,
         },
-      }); 
-      
-      const res = [{
-        userId: "user123",
-        // ... 他のフィールド
-      }]
+      });
 
-      const userIds = res.map(item => item.userId);
+      const res = [
+        {
+          userId: 'user123',
+          // ... 他のフィールド
+        },
+      ];
+
+      const userIds = res.map((item) => item.userId);
 
       const userDataArray = userIds.map(async (userId) => {
         const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${MOCK_TOKEN}`,
+            Authorization: `Bearer ${MOCK_TOKEN}`,
           },
         });
         return userResponse.json();
-      })
+      });
 
       const finalData = res.map((item, index) => ({
         ...item,
-        userData: userDataArray.find((data) => data.userId === item.userId) ,
+        userData: userDataArray.find((data) => data.userId === item.userId),
       }));
 
       const data = await response.json();
@@ -51,9 +53,9 @@ const Goals = () => {
 
   const onClick = async () => {
     const newGoal = {
-      title: "新しい目標",
-      deadline: "2024-12-31", 
-    }
+      title: '新しい目標',
+      deadline: '2024-12-31',
+    };
 
     console.log('newGoal', newGoal);
 
@@ -61,15 +63,15 @@ const Goals = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MOCK_TOKEN}`,
+        Authorization: `Bearer ${MOCK_TOKEN}`,
       },
       body: JSON.stringify(newGoal),
     });
 
     console.log('res', res);
-  }
+  };
 
-    /**
+  /**
    * @param {string | null} dateString
    * @returns {string}
    */
@@ -79,7 +81,6 @@ const Goals = () => {
     }
     return new Date(dateString).toLocaleDateString('ja-JP');
   };
-
 
   return (
     <>
