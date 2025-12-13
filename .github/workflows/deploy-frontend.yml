@@ -1,0 +1,58 @@
+name: Deploy Frontend to Cloud Storage
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'react/**'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  WORKING_DIRECTORY: 'react'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.WORKING_DIRECTORY }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npm run build
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Upload to Cloud Storage
+        run: |
+          gsutil -m rsync -r -d ${{ env.WORKING_DIRECTORY }}/dist gs://${{ secrets.GCS_BUCKET_NAME }}
+
+      - name: Invalidate Cloud CDN cache
+        run: |
+          gcloud compute url-maps invalidate-cdn-cache ${{ secrets.CDN_URL_MAP_NAME }} \
+            --path "/*" \
+            --async
