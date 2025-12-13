@@ -36,7 +36,7 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-// JwtHandler はJWTの設定を保持します。
+// JWTConfig はJWTの設定を保持します。
 type JWTConfig struct {
 	SecretKey            []byte
 	AccessTokenDuration  time.Duration
