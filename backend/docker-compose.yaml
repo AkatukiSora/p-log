@@ -1,0 +1,67 @@
+services:
+  db:
+    image: postgres:16.1-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: p-log
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: dev
+    container_name: backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=p-log
+      - JWT_SECRET=your-secret-key-change-in-production-please-use-strong-random-key
+      - JWT_ISSUER=p-log
+      - JWT_AUDIENCE=p-log-users
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+          ignore:
+            - "*.md"
+            - ".git/"
+            - ".gitignore"
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: swagger
+    ports:
+      - "8081:8080"
+    environment:
+      SWAGGER_JSON: "/openapi.yaml"
+    volumes:
+      - ../docs/api.yaml:/openapi.yaml:ro
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+  
+networks:
+  default:
+    driver: bridge
