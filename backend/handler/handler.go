@@ -5,29 +5,35 @@ import (
 
 	"backend/api"
 	"backend/ent"
+	"backend/internal/image"
 	"backend/internal/jwt"
 )
 
 // Handler は api.Handler インターフェースを実装するメイン構造体です。
 // 各ドメインごとのハンドラーを保持し、メソッド呼び出しを委譲します。
 type Handler struct {
-	client     *ent.Client
-	jwtHandler *jwt.JwtHandler
+	client       *ent.Client
+	jwtHandler   *jwt.JwtHandler
+	imageService *image.ImageService
 }
 
 // NewHandler は新しいHandlerインスタンスを作成します。
 // 各ドメインハンドラーの初期化が必要な場合は、ここで行います。
-func NewHandler(client *ent.Client, jwtHandler *jwt.JwtHandler) (*Handler, error) {
+func NewHandler(client *ent.Client, jwtHandler *jwt.JwtHandler, imageService *image.ImageService) (*Handler, error) {
 	if client == nil {
 		return nil, ErrClientRequired
 	}
 	if jwtHandler == nil {
 		return nil, ErrJWTHandlerRequired
 	}
+	if imageService == nil {
+		return nil, ErrImageServiceRequired
+	}
 
 	h := &Handler{
-		client:     client,
-		jwtHandler: jwtHandler,
+		client:       client,
+		jwtHandler:   jwtHandler,
+		imageService: imageService,
 	}
 
 	return h, nil

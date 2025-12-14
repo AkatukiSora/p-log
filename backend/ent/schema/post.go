@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -45,9 +46,12 @@ func (Post) Edges() []ent.Edge {
 			Unique().
 			Required(),
 		// Post -> Image (1対多)
-		edge.To("images", Image.Type),
+		// いったんバケットとの整合は考慮しない
+		edge.To("images", Image.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 		// Post -> Reaction (1対多)
-		edge.To("reactions", Reaction.Type),
+		edge.To("reactions", Reaction.Type).
+			Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }
 

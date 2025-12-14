@@ -5,9 +5,14 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"backend/api"
 	"backend/ent"
+	"backend/internal/jwt"
+	"backend/security"
+
+	"github.com/ogen-go/ogen/ogenerrors"
 )
 
 var (
@@ -16,6 +21,9 @@ var (
 
 	// ErrJWTHandlerRequired はJWTHandlerが必須であることを示すエラーです。
 	ErrJWTHandlerRequired = errors.New("JWT handler is required")
+
+	// ErrImageServiceRequired はImageServiceが必須であることを示すエラーです。
+	ErrImageServiceRequired = errors.New("image service is required")
 
 	// ErrNotFound はリソースが見つからない場合のエラーです。
 	ErrNotFound = errors.New("resource not found")
@@ -52,6 +60,37 @@ func NewError(ctx context.Context, err error) *api.GeneralErrorStatusCode {
 		"error", err.Error(),
 	)
 
+	// ogenerrors.SecurityErrorの処理
+	var secErr *ogenerrors.SecurityError
+	if errors.As(err, &secErr) {
+		// SecurityErrorの中身を確認
+		if secErr.Err != nil {
+			errMsg := secErr.Err.Error()
+			// "security requirement is not satisfied"を含む場合は401
+			if strings.Contains(errMsg, "security requirement is not satisfied") {
+				return &api.GeneralErrorStatusCode{
+					StatusCode: http.StatusUnauthorized,
+					Response: api.Error{
+						Message: "authentication required",
+					},
+				}
+			}
+			// JWT関連のエラーをチェック
+			if errors.Is(secErr.Err, jwt.ErrInvalidToken) ||
+				errors.Is(secErr.Err, jwt.ErrExpiredToken) ||
+				errors.Is(secErr.Err, jwt.ErrInvalidClaims) ||
+				errors.Is(secErr.Err, jwt.ErrRevokedToken) ||
+				errors.Is(secErr.Err, security.ErrMissingToken) {
+				return &api.GeneralErrorStatusCode{
+					StatusCode: http.StatusUnauthorized,
+					Response: api.Error{
+						Message: "authentication required",
+					},
+				}
+			}
+		}
+	}
+
 	// エラーの種類に応じて適切なレスポンスを返す
 	switch {
 	case errors.Is(err, ErrNotFound) || ent.IsNotFound(err):
@@ -61,7 +100,12 @@ func NewError(ctx context.Context, err error) *api.GeneralErrorStatusCode {
 				Message: "resource not found",
 			},
 		}
-	case errors.Is(err, ErrUnauthorized):
+	case errors.Is(err, ErrUnauthorized) ||
+		errors.Is(err, jwt.ErrInvalidToken) ||
+		errors.Is(err, jwt.ErrExpiredToken) ||
+		errors.Is(err, jwt.ErrInvalidClaims) ||
+		errors.Is(err, jwt.ErrRevokedToken) ||
+		errors.Is(err, security.ErrMissingToken):
 		return &api.GeneralErrorStatusCode{
 			StatusCode: http.StatusUnauthorized,
 			Response: api.Error{

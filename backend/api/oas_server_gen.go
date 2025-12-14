@@ -19,7 +19,7 @@ type Handler interface {
 	// OIDCログインを開始.
 	//
 	// GET /auth/login
-	AuthLoginGet(ctx context.Context) error
+	AuthLoginGet(ctx context.Context) (*AuthLoginGetMovedPermanently, error)
 	// AuthLogoutPost implements POST /auth/logout operation.
 	//
 	// ログアウト.
@@ -32,6 +32,12 @@ type Handler interface {
 	//
 	// GET /auth/me
 	AuthMeGet(ctx context.Context) (AuthMeGetRes, error)
+	// AuthRefreshPost implements POST /auth/refresh operation.
+	//
+	// アクセストークンのリフレッシュ.
+	//
+	// POST /auth/refresh
+	AuthRefreshPost(ctx context.Context) (AuthRefreshPostRes, error)
 	// FriendsGet implements GET /friends operation.
 	//
 	// 自分のフレンド（フォロー）一覧取得.
@@ -152,12 +158,6 @@ type Handler interface {
 	//
 	// GET /timeline
 	TimelineGet(ctx context.Context, params TimelineGetParams) (TimelineGetRes, error)
-	// UsersPost implements POST /users operation.
-	//
-	// 新規ユーザー登録.
-	//
-	// POST /users
-	UsersPost(ctx context.Context, req *UserRequest) (UsersPostRes, error)
 	// UsersUserIDDelete implements DELETE /users/{user_id} operation.
 	//
 	// ユーザーアカウント削除.

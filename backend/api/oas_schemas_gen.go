@@ -15,62 +15,57 @@ func (s *GeneralErrorStatusCode) Error() string {
 	return fmt.Sprintf("code %d: %+v", s.StatusCode, s.Response)
 }
 
+// AuthCallbackGetNoContent is response for AuthCallbackGet operation.
+type AuthCallbackGetNoContent struct {
+	SetCookie OptString
+}
+
+// GetSetCookie returns the value of SetCookie.
+func (s *AuthCallbackGetNoContent) GetSetCookie() OptString {
+	return s.SetCookie
+}
+
+// SetSetCookie sets the value of SetCookie.
+func (s *AuthCallbackGetNoContent) SetSetCookie(val OptString) {
+	s.SetCookie = val
+}
+
+func (*AuthCallbackGetNoContent) authCallbackGetRes() {}
+
 // AuthLoginGetMovedPermanently is response for AuthLoginGet operation.
-type AuthLoginGetMovedPermanently struct{}
+type AuthLoginGetMovedPermanently struct {
+	Location OptString
+}
+
+// GetLocation returns the value of Location.
+func (s *AuthLoginGetMovedPermanently) GetLocation() OptString {
+	return s.Location
+}
+
+// SetLocation sets the value of Location.
+func (s *AuthLoginGetMovedPermanently) SetLocation(val OptString) {
+	s.Location = val
+}
 
 // AuthLogoutPostNoContent is response for AuthLogoutPost operation.
 type AuthLogoutPostNoContent struct{}
 
-// Ref: #/components/schemas/AuthToken
-type AuthToken struct {
-	AccessToken  string    `json:"access_token"`
-	TokenType    string    `json:"token_type"`
-	RefreshToken OptString `json:"refresh_token"`
-	// Access_tokenの有効期限（秒）.
-	ExpiresIn time.Time `json:"expires_in"`
+// AuthRefreshPostNoContent is response for AuthRefreshPost operation.
+type AuthRefreshPostNoContent struct {
+	SetCookie OptString
 }
 
-// GetAccessToken returns the value of AccessToken.
-func (s *AuthToken) GetAccessToken() string {
-	return s.AccessToken
+// GetSetCookie returns the value of SetCookie.
+func (s *AuthRefreshPostNoContent) GetSetCookie() OptString {
+	return s.SetCookie
 }
 
-// GetTokenType returns the value of TokenType.
-func (s *AuthToken) GetTokenType() string {
-	return s.TokenType
+// SetSetCookie sets the value of SetCookie.
+func (s *AuthRefreshPostNoContent) SetSetCookie(val OptString) {
+	s.SetCookie = val
 }
 
-// GetRefreshToken returns the value of RefreshToken.
-func (s *AuthToken) GetRefreshToken() OptString {
-	return s.RefreshToken
-}
-
-// GetExpiresIn returns the value of ExpiresIn.
-func (s *AuthToken) GetExpiresIn() time.Time {
-	return s.ExpiresIn
-}
-
-// SetAccessToken sets the value of AccessToken.
-func (s *AuthToken) SetAccessToken(val string) {
-	s.AccessToken = val
-}
-
-// SetTokenType sets the value of TokenType.
-func (s *AuthToken) SetTokenType(val string) {
-	s.TokenType = val
-}
-
-// SetRefreshToken sets the value of RefreshToken.
-func (s *AuthToken) SetRefreshToken(val OptString) {
-	s.RefreshToken = val
-}
-
-// SetExpiresIn sets the value of ExpiresIn.
-func (s *AuthToken) SetExpiresIn(val time.Time) {
-	s.ExpiresIn = val
-}
-
-func (*AuthToken) authCallbackGetRes() {}
+func (*AuthRefreshPostNoContent) authRefreshPostRes() {}
 
 type BearerAuth struct {
 	Token string
@@ -114,12 +109,12 @@ func (s *Error) SetMessage(val string) {
 
 func (*Error) authCallbackGetRes()         {}
 func (*Error) authMeGetRes()               {}
+func (*Error) authRefreshPostRes()         {}
 func (*Error) friendsGetRes()              {}
 func (*Error) goalsGoalIDGetRes()          {}
 func (*Error) imagesImageIDGetRes()        {}
 func (*Error) postsPostIDGetRes()          {}
 func (*Error) postsPostIDReactionsGetRes() {}
-func (*Error) usersPostRes()               {}
 func (*Error) usersUserIDIconGetRes()      {}
 
 type FriendsGetOKApplicationJSON []uuid.UUID
@@ -1063,7 +1058,6 @@ func (s *User) SetBio(val OptString) {
 }
 
 func (*User) authMeGetRes()      {}
-func (*User) usersPostRes()      {}
 func (*User) usersUserIDGetRes() {}
 func (*User) usersUserIDPutRes() {}
 

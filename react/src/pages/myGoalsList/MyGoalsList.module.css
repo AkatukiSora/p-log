@@ -2,7 +2,7 @@
     padding: 5px;
     font-size: 20px;
     width: 14vw;
-    line-height: 20px;
+    line-height: 7vw;
     text-align: left;
     border-radius: 30px;
     transition: 0.5s;
@@ -12,7 +12,7 @@
 
 .option:hover{
     width: 16vw;
-    line-height: 35px;
+    line-height: 9vw;
 }
 
 
@@ -26,7 +26,3 @@ small{
     align-items: center;
 }
 
-
-.list{
-    text-align: left;
-}
