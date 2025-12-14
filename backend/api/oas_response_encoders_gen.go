@@ -17,10 +17,25 @@ import (
 
 func encodeAuthCallbackGetResponse(response AuthCallbackGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *AuthCallbackGetNoContent:
+	case *AuthCallbackGetMovedPermanently:
 		// Encoding response headers.
 		{
 			h := uri.NewHeaderEncoder(w.Header())
+			// Encode "Location" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "Location",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					if val, ok := response.Location.Get(); ok {
+						return e.EncodeValue(conv.StringToString(val))
+					}
+					return nil
+				}); err != nil {
+					return errors.Wrap(err, "encode Location header")
+				}
+			}
 			// Encode "Set-Cookie" header.
 			{
 				cfg := uri.HeaderParameterEncodingConfig{
@@ -37,8 +52,8 @@ func encodeAuthCallbackGetResponse(response AuthCallbackGetRes, w http.ResponseW
 				}
 			}
 		}
-		w.WriteHeader(204)
-		span.SetStatus(codes.Ok, http.StatusText(204))
+		w.WriteHeader(301)
+		span.SetStatus(codes.Ok, http.StatusText(301))
 
 		return nil
 

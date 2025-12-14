@@ -45,9 +45,13 @@ paths:
           $ref: '#/components/responses/BadRequest'
         default:
           $ref: '#/components/responses/GeneralError'
-        '204':
-          description: 認証成功
+        '301':
+          description: 認証成功、フロントエンドにリダイレクト
           headers:
+            Location:
+              schema:
+                type: string
+              description: フロントエンドのURL
             Set-Cookie:
               schema:
                 type: string

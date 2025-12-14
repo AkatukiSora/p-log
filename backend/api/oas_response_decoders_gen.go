@@ -18,10 +18,47 @@ import (
 
 func decodeAuthCallbackGetResponse(resp *http.Response) (res AuthCallbackGetRes, _ error) {
 	switch resp.StatusCode {
-	case 204:
-		// Code 204.
-		var wrapper AuthCallbackGetNoContent
+	case 301:
+		// Code 301.
+		var wrapper AuthCallbackGetMovedPermanently
 		h := uri.NewHeaderDecoder(resp.Header)
+		// Parse "Location" header.
+		{
+			cfg := uri.HeaderParameterDecodingConfig{
+				Name:    "Location",
+				Explode: false,
+			}
+			if err := func() error {
+				if err := h.HasParam(cfg); err == nil {
+					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+						var wrapperDotLocationVal string
+						if err := func() error {
+							val, err := d.DecodeValue()
+							if err != nil {
+								return err
+							}
+
+							c, err := conv.ToString(val)
+							if err != nil {
+								return err
+							}
+
+							wrapperDotLocationVal = c
+							return nil
+						}(); err != nil {
+							return err
+						}
+						wrapper.Location.SetTo(wrapperDotLocationVal)
+						return nil
+					}); err != nil {
+						return err
+					}
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "parse Location header")
+			}
+		}
 		// Parse "Set-Cookie" header.
 		{
 			cfg := uri.HeaderParameterDecodingConfig{
