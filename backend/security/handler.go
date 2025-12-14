@@ -3,6 +3,7 @@ package security
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	"backend/api"
@@ -34,14 +35,15 @@ func NewSecurityHandler(s *jwt.JwtHandler, client *ent.Client) *SecurityHandler 
 func (s *SecurityHandler) HandleBearerAuth(ctx context.Context, operationName api.OperationName, t api.BearerAuth) (context.Context, error) {
 	// トークンの存在確認
 	if t.Token == "" {
-		return ctx, ErrMissingToken
+		return ctx, fmt.Errorf("authentication failed: %w", ErrMissingToken)
 	}
 
 	// JWTトークンを検証
 	claims, err := s.jwtHandler.ValidateToken(t.Token)
 	if err != nil {
 		log.Printf("token validation failed: %v", err)
-		return ctx, err
+		// JWT関連のエラーをそのまま返して、handler.NewErrorで401として処理されるようにする
+		return ctx, fmt.Errorf("authentication failed: %w", err)
 	}
 
 	// 検証成功後、ユーザー情報をcontextに保存
