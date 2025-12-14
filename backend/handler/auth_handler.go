@@ -5,9 +5,12 @@ import (
 	"backend/ent"
 	"backend/ent/user"
 	"backend/internal/oauth"
+	"backend/security"
 	"context"
 	"fmt"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -150,7 +153,45 @@ func (h *Handler) AuthLogoutPost(ctx context.Context) error {
 // AuthMeGet implements GET /auth/me operation.
 // 現在のユーザー情報を取得
 func (h *Handler) AuthMeGet(ctx context.Context) (api.AuthMeGetRes, error) {
-	// TODO: Cookieからアクセストークンを取得して検証
-	// TODO: トークンからユーザーIDを取得してユーザー情報を返す
-	return &api.User{}, nil
+	// セキュリティハンドラーで認証済みのコンテキストからユーザーIDを取得
+	userIDStr, err := security.GetUserIDFromContext(ctx)
+	if err != nil {
+		return &api.Error{
+			Message: "Unauthorized: " + err.Error(),
+		}, nil
+	}
+
+	// UUIDにパース
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return &api.Error{
+			Message: "Invalid user ID format",
+		}, nil
+	}
+
+	// データベースからユーザー情報を取得
+	currentUser, err := h.client.User.Query().
+		Where(user.IDEQ(userID)).
+		WithGenres().
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return &api.Error{
+				Message: "User not found",
+			}, nil
+		}
+		return &api.Error{
+			Message: fmt.Sprintf("Database error: %v", err),
+		}, nil
+	}
+
+	// api.User型に変換
+	apiUser, err := h.convertUserToAPI(currentUser)
+	if err != nil {
+		return &api.Error{
+			Message: fmt.Sprintf("Failed to convert user: %v", err),
+		}, nil
+	}
+
+	return apiUser, nil
 }
