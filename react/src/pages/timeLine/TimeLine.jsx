@@ -8,55 +8,8 @@ const API_BASE_URL = 'http://localhost:8080/api/v1';
 const MOCK_TOKEN = 'mock_access_token';
 
 export default function TimeLine() {
-  // const postsList = [
-  //   {
-  //     userId:1,
-  //     id:1,
-  //     title:"応用情報合格",
-  //     content:"模擬試験受験",
-  //     date:new Date("2025-10-12"),
-  //   },
-  //   {
-  //     userId:1,
-  //     id:2,
-  //     title:"応用情報合格",
-  //     content:"過去問200問やった",
-  //     date:new Date("2025-10-5"),
-  //   },
-  //   {
-  //     userId:2,
-  //     id:3,
-  //     title:"AtCoder入茶",
-  //     content:"C問題解いた",
-  //     date:new Date("2025-10-1"),
-  //   },
-  //   {
-  //     userId:3,
-  //     id:4,
-  //     title:"貯金50万円",
-  //     content:"5万円入金",
-  //     date:new Date("2025-9-30"),
-  //   },
-  // ]
-
-  // const users ={
-  //   1: {
-  //     name: "たま",
-  //     icon: "./azarashi.png",
-  //   },
-  //   2: {
-  //     name: "フリテン",
-  //     icon: "./ika.png",
-  //   },
-  //   3: {
-  //     name: "もっさり",
-  //     icon: "./pig.png",
-  //   },
-  // }
-
-  const [userLiked, setUserLiked] = useState({});
-
   const [posts,setPosts]=useState([]);
+  const [reaction,setReaction]=useState([]);
 
   useEffect(()=>{
     const fetchTimeLine=async()=>{
@@ -122,19 +75,54 @@ export default function TimeLine() {
       }));
       setPosts(data);
       console.log(data)
+
+      const initialReaction=data.map((d)=>{
+        return{
+          postId: d.id,
+          isReacted: false,
+          count: d.postData.reaction_count,
+        };
+      });
+      setReaction(initialReaction)
     };
     fetchTimeLine();
 
   },[]);
-  const handleLikeToggle = (id) => {
-
-    const newLiked= {
-      id:id,
-      isReacted:!isReacted,
-      count: isReacted ? count - 1 : count + 1,
+  const onReactionClick =async (post) => {
+    const temp=post.count
+    const updatedReaction=reaction.map((r)=>{
+      if(r.postId === post.id){
+        r.isReacted ? temp -1 : temp + 1
+        return {
+          postId:r.postId,
+          isReacted: !r.isReacted,
+          count: r.isReacted ? r.count - 1 : r.count + 1
+        }
+      }
+      return r;
+    })
+    setReaction(updatedReaction)
+    const newPost = {
+      id: post.id,
+      user_id: post.user_id,
+      goal_id: post.goal_id,
+      content: post.content,
+      image_urls: post.image_urls,
+      reaction_count: temp,
+      created_at: post.created_at,
+      updated_at: post.updated_at
     }
-    setUserLiked(newLiked)
-  };
+
+    const res = await fetch(`${API_BASE_URL}/posts/${post.id}`,{
+      method: "PUT",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${MOCK_TOKEN}`,
+      },
+      body: JSON.stringify(newPost),
+    });
+    console.log("res:",res)
+  }
     // タイムライン
   return (
     <>
@@ -144,8 +132,9 @@ export default function TimeLine() {
       </header>
       <main className="main">
         <div className={styles.default}>
-          {posts.map((post)=>{
-            const reaction = 
+          {posts.map((post)=>{ 
+            const reacted = reaction.find((r)=>r.postId === post.id)?.isReacted
+            const reactionCount = reaction.find((r)=>r.postId === post.id)?.count
             return(
               <div key={post.id} className={styles.post}>
                   <div>
@@ -155,12 +144,15 @@ export default function TimeLine() {
                   <div>
                     <div className={styles.option}>{post.goalData.title}</div>
                   <div className={styles.post}>
-                    <div className={styles.p}>{post.content}<small>({new Date(post.created_at).toLocaleDateString()})</small></div>
+                    <div>{post.content}<small>({new Date(post.created_at).toLocaleDateString()})</small></div>
                     <button
-                      onClick={() => handleLikeToggle(post.id)}
+                      onClick={() =>{
+                        console.log('Clicked:', post.id) 
+                        onReactionClick(post)}}
                       className={styles.button}
                     >
-                      {reaction.isReacted ? <BsEmojiGrinFill/> : <BsEmojiNeutral />}{post.postData.reaction_count}
+                      {reacted ? <BsEmojiGrinFill/> : <BsEmojiNeutral />}
+                      {reactionCount}
                     </button>
                   </div>
                   </div>
