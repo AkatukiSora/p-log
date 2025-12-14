@@ -3,9 +3,9 @@ import { ROUTES } from '../pathData/path';
 import styles from './FriendList.module.css';
 import ButtonBottomOption from '../../components/button/buttonBottomOption/ButtonBottomOption';
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../config/api.js';
 
 export default function FriendList() {
-  const API_BASE_URL = 'http://localhost:8080/api/v1';
   const MOCK_TOKEN = 'mock_access_token';
 
   // 写真を入れてないです...

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import ButtonBottomOption from '../../components/button/buttonBottomOption/ButtonBottomOption.jsx';
 import styles from './AddPost.module.css';
-
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+import { API_BASE_URL } from '../../config/api.js';
 const MOCK_TOKEN = 'mock_access_token';
 const MOCK_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
 

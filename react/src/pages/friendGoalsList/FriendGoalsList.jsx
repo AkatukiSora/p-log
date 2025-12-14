@@ -2,8 +2,7 @@ import ButtonBottomOption from '../../components/button/buttonBottomOption/Butto
 import ButtonTopFriendOption from '../../components/button/buttonTopFriendOption/ButtonTopFriendOption.jsx';
 import { useEffect, useState } from 'react';
 import styles from './friendGoalsList.module.css';
-
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+import { API_BASE_URL } from '../../config/api.js';
 const MOCK_TOKEN = 'mock_access_token';
 const friend_id = '223e4567-e89b-12d3-a456-426614174001';
 

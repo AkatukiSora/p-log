@@ -3,8 +3,7 @@ import { useState, useEffect, use } from 'react';
 import styles from './TimeLine.module.css';
 import { BsEmojiNeutral } from 'react-icons/bs';
 import { BsEmojiGrinFill } from 'react-icons/bs';
-
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+import { API_BASE_URL } from '../../config/api.js';
 const MOCK_TOKEN = 'mock_access_token';
 
 export default function TimeLine() {

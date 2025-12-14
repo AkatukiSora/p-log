@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import ButtonBottomOption from '../../components/button/buttonBottomOption/ButtonBottomOption';
 import ButtonTopMyOption from '../../components/button/buttonTopMyOption/ButtonTopMyOption';
 import styles from './Goals.module.css';
-
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+import { API_BASE_URL } from '../../config/api.js';
 const MOCK_TOKEN = 'mock_access_token';
 
 /**

@@ -2,8 +2,7 @@ import ButtonBottomOption from '../../components/button/buttonBottomOption/Butto
 import ButtonTopMyOption from '../../components/button/buttonTopMyOption/ButtonTopMyOption';
 import { useState, useEffect } from 'react';
 import styles from './MyGoalsList.module.css';
-
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+import { API_BASE_URL } from '../../config/api.js';
 const MOCK_TOKEN = 'mock_access_token';
 
 const MyGoalsList = () => {
