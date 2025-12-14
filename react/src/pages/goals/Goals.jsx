@@ -18,40 +18,40 @@ const Goals = () => {
     const fetchGoals = async () => {
       const response = await fetch(`${API_BASE_URL}/goals`, {
         headers: {
-          'Authorization': `Bearer ${MOCK_TOKEN}`,
+          Authorization: `Bearer ${MOCK_TOKEN}`,
         },
-      }); 
-      
+      });
+
       const res = [
         {
-        userId: "user123",
-        // ... 他のフィールド
+          userId: 'user123',
+          // ... 他のフィールド
         },
         {
-          userId: "user343",
-        // ... 他のフィールド
-        }
-      ]
-      
-      const userIds = res.map(item => item.userId);
+          userId: 'user343',
+          // ... 他のフィールド
+        },
+      ];
+
+      const userIds = res.map((item) => item.userId);
       const userDataArray = userIds.map(async (userId) => {
         const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${MOCK_TOKEN}`,
+            Authorization: `Bearer ${MOCK_TOKEN}`,
           },
         });
         return userResponse.json();
-      })
+      });
 
       const finalData = res.map((item, index) => ({
         ...item,
-        userData: userDataArray.find((data) => data.userId === item.userId) ,
+        userData: userDataArray.find((data) => data.userId === item.userId),
       }));
 
       const data = await response.json();
       setGoals(data);
 
-      const tempGoals = data; 
+      const tempGoals = data;
 
       const initialReaction = tempGoals.map((goal) => {
         return {
@@ -59,7 +59,7 @@ const Goals = () => {
           isReacted: false,
         };
       });
-      setReaction(initialReaction)
+      setReaction(initialReaction);
     };
 
     fetchGoals();
@@ -67,9 +67,9 @@ const Goals = () => {
 
   const onClick = async () => {
     const newGoal = {
-      title: "新しい目標",
-      deadline: "2024-12-31", 
-    }
+      title: '新しい目標',
+      deadline: '2024-12-31',
+    };
 
     console.log('newGoal', newGoal);
 
@@ -77,15 +77,15 @@ const Goals = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MOCK_TOKEN}`,
+        Authorization: `Bearer ${MOCK_TOKEN}`,
       },
       body: JSON.stringify(newGoal),
     });
 
     console.log('res', res);
-  }
+  };
 
-    /**
+  /**
    * @param {string | null} dateString
    * @returns {string}
    */
@@ -97,7 +97,6 @@ const Goals = () => {
   };
 
   const onReactionClick = async (clickedGoalId) => {
-    
     // await fetch(`${API_BASE_URL}/goals/${clickedGoalId}/reaction`, {
     //   method: 'POST',
     //   headers: {
@@ -115,8 +114,8 @@ const Goals = () => {
       }
       return reaction;
     });
-    setReaction(updatedReaction);  
-  }
+    setReaction(updatedReaction);
+  };
 
   return (
     <>
@@ -129,21 +128,21 @@ const Goals = () => {
         <div className={styles.container}>
           <ul className={styles.goalList}>
             {goals.map((goal) => {
-              const isReacted = reaction.find((reaction) => reaction.goalId === goal.id)?.isReacted
+              const isReacted = reaction.find((reaction) => reaction.goalId === goal.id)?.isReacted;
 
               return (
-              <li key={goal.id} className={styles.goalItem}>
-                <div className={styles.goalTitle}>{goal.title}</div>
-                <div className={styles.goalMeta}>
-                  <span>期限: {formatDate(goal.deadline)}</span>
-                  <span>作成日: {formatDate(goal.created_at)}</span>
-                </div>
-                <button type='button'  onClick={() => onReactionClick(goal.id)}>                 
-                {isReacted ? "❤️" : "♡"}
-                </button>
-              </li>
-            )}
-            )}
+                <li key={goal.id} className={styles.goalItem}>
+                  <div className={styles.goalTitle}>{goal.title}</div>
+                  <div className={styles.goalMeta}>
+                    <span>期限: {formatDate(goal.deadline)}</span>
+                    <span>作成日: {formatDate(goal.created_at)}</span>
+                  </div>
+                  <button type="button" onClick={() => onReactionClick(goal.id)}>
+                    {isReacted ? '❤️' : '♡'}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </main>

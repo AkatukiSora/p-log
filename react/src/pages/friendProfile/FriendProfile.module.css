@@ -1,37 +1,37 @@
-.icon{
-    font-size: 20px;
-    position: absolute;
-    top: 10px;
-    left: 10px;
+.icon {
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 
-.icon img{
-    width: 12vw;
-    height: 12vw;
-    border-radius: 50%;
+.icon img {
+  width: 12vw;
+  height: 12vw;
+  border-radius: 50%;
 }
 
 .profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
 }
 
 .row {
-    display: grid;
-    grid-template-columns: 15vw 32.5vw;
-    gap: 50px;
-    font-size: 25px;
+  display: grid;
+  grid-template-columns: 15vw 32.5vw;
+  gap: 50px;
+  font-size: 25px;
 }
 
 .label {
-    font-weight: bold;
-    text-align: right;
+  font-weight: bold;
+  text-align: right;
 }
 
 .value {
-    font-size: 17px;
-    text-align: left;
-    word-break: break-word;
+  font-size: 17px;
+  text-align: left;
+  word-break: break-word;
 }

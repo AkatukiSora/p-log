@@ -1,70 +1,68 @@
-.option{
-    padding: 5px;
-    font-size: 20px;
-    width: 14vw;
-    line-height: 20px;
-    text-align: center;
-    border: 3px solid #FFF;
-    border-radius: 30px;
-    transition: 0.5s;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    color: white;
+.option {
+  padding: 5px;
+  font-size: 20px;
+  width: 14vw;
+  line-height: 20px;
+  text-align: center;
+  border: 3px solid #fff;
+  border-radius: 30px;
+  transition: 0.5s;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  color: white;
 }
 
-.option:hover{
-    width: 16vw;
-    line-height: 35px;
+.option:hover {
+  width: 16vw;
+  line-height: 35px;
 }
 
-.post{
-    display: flex;
-    gap: 3rem;
-    padding: 1rem;
+.post {
+  display: flex;
+  gap: 3rem;
+  padding: 1rem;
 }
 
 .post > :first-child {
-  width:  150px;
+  width: 150px;
   display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: center;
 }
 
-
-
 .button {
-    border-radius: 50%;
-    border: none;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    text-align: center;
-    justify-content: center;
-    width: 5vw;
-    height: 2.5vw;
-    align-self: flex-end;
-    color:white;
-    transition: 0.5s;
-    font-size: 15px;
+  border-radius: 50%;
+  border: none;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  text-align: center;
+  justify-content: center;
+  width: 5vw;
+  height: 2.5vw;
+  align-self: flex-end;
+  color: white;
+  transition: 0.5s;
+  font-size: 15px;
 }
 
-.button:hover{
-    width: 4.5vw;
-    height: 3.5vw;
-    line-height: 35px;
+.button:hover {
+  width: 4.5vw;
+  height: 3.5vw;
+  line-height: 35px;
 }
 
-.usericon{
-    width: 15px;
-    border-radius: 50%;
-    margin-bottom: 5px;
+.usericon {
+  width: 15px;
+  border-radius: 50%;
+  margin-bottom: 5px;
 }
 
-.default{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.p{
-    width: 300px;
-    align-items: left;
+.p {
+  width: 300px;
+  align-items: left;
 }

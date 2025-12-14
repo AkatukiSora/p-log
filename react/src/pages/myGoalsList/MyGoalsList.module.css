@@ -1,28 +1,26 @@
-.option{
-    padding: 5px;
-    font-size: 20px;
-    width: 14vw;
-    line-height: 7vw;
-    text-align: left;
-    border-radius: 30px;
-    transition: 0.5s;
-    background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
-    color: white;
+.option {
+  padding: 5px;
+  font-size: 20px;
+  width: 14vw;
+  line-height: 7vw;
+  text-align: left;
+  border-radius: 30px;
+  transition: 0.5s;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  color: white;
 }
 
-.option:hover{
-    width: 16vw;
-    line-height: 9vw;
+.option:hover {
+  width: 16vw;
+  line-height: 9vw;
 }
 
-
-small{
-    font-size: 10px;
+small {
+  font-size: 10px;
 }
 
-.default{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
