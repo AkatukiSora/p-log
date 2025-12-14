@@ -9,21 +9,23 @@ import TimeLine from './pages/timeLine/TimeLine.jsx'
 import AddPost from './pages/AddPost/AddPost.jsx'
 import SettingGoal from './pages/settingGoal/SettingGoal.jsx'
 import Goals from './pages/goals/Goals.jsx'
+import { useState } from 'react'
 
 function App() {
+  const [users,setUsers]=useState();
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MyGoalsList />}/>
-          <Route path={ROUTES.myProfile} element={<MyProfile />}/>
-          <Route path={ROUTES.friendList} element={<FriendList />}/>
-          <Route path={ROUTES.friendProfile} element={<FriendProfile />}/>
-          <Route path={ROUTES.friendGoals} element={<FriendGoalsList />}/>
-          <Route path={ROUTES.timeLine} element={<TimeLine />}/>
-          <Route path={ROUTES.settingGoal} element={<SettingGoal />}/>
-          <Route path={ROUTES.addPost} element={<AddPost />}/>
+          <Route path={ROUTES.myList} element={<MyGoalsList users={users}/>}/>
+          <Route path={ROUTES.myProfile} element={<MyProfile users={users}/>}/>
+          <Route path={ROUTES.friendList} element={<FriendList users={users}/>}/>
+          <Route path={ROUTES.friendProfile} element={<FriendProfile users={users}/>}/>
+          <Route path={ROUTES.friendGoals} element={<FriendGoalsList users={users}/>}/>
+          <Route path={ROUTES.timeLine} element={<TimeLine users={users}/>}/>
+          <Route path={ROUTES.settingGoal} element={<SettingGoal users={users}/>}/>
+          <Route path={ROUTES.addPost} element={<AddPost users={users}/>}/>
           {/* <Route path="/"
           {ROUTES.goals}
            element={<Goals />}/> */}

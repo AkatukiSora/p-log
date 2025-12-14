@@ -31,7 +31,8 @@ const MOCK_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
 //   },
 // ]
 
-export default function AddPost() {
+export default function AddPost({users}) {
+  
   const [goals,setGoals]=useState([]);
   const [goalsTitle,setGoalsTitle]=useState([]);
   const [selectedGoalId,setSelectedGoalId]=useState(null);

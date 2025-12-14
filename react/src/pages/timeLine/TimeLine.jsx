@@ -7,7 +7,7 @@ import { BsEmojiGrinFill } from "react-icons/bs";
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 const MOCK_TOKEN = 'mock_access_token';
 
-export default function TimeLine() {
+export default function TimeLine({users}) {
   const [posts,setPosts]=useState([]);
   const [reaction,setReaction]=useState([]);
 

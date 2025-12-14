@@ -3,7 +3,7 @@ import ButtonBottomOption from "../../components/button/buttonBottomOption/Butto
 import GoalsData from "../../components/goalsData/GoalsData"
 import styles from "./SettingGoal.module.css"
 
-export default function SettingGoal() {
+export default function SettingGoal({users}) {
 
     const [goalDatas, setGoalDatas] = useState([])
     const [addText, setAddText] = useState("")

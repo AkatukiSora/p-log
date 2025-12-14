@@ -7,8 +7,8 @@ const API_BASE_URL = 'http://localhost:8080/api/v1';
 const MOCK_TOKEN = 'mock_access_token';
 const friend_id = "223e4567-e89b-12d3-a456-426614174001"
 
-export default function friendGoalsList() {
-
+export default function friendGoalsList({users}) {
+    
     const [friendGoals,setFriendGoals]=useState([]);
     useEffect(()=>{
         const fetchGoals=async()=>{

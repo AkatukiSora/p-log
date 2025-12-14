@@ -4,7 +4,7 @@ import styles from "./FriendList.module.css"
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption"
 import { useState } from "react"
 
-export default function FriendList() {
+export default function FriendList({users}) {
 
     // テストデータ
     const datas = [

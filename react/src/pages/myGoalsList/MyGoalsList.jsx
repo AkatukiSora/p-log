@@ -6,7 +6,9 @@ import styles from "./MyGoalsList.module.css"
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 const MOCK_TOKEN = 'mock_access_token';
 
-const MyGoalsList = () => {
+const MyGoalsList = ({users}) => {
+
+  
     // 自身の目標一覧(ホーム)
   const [goals,setGoals]=useState([]);
 
