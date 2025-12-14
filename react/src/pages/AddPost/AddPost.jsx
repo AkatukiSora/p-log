@@ -1,96 +1,101 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption.jsx"
 import styles from "./AddPost.module.css"
 
-// const goalsList = [
-// {
-//   userId:1,
-//   id:1,
-//   content:"ハッカソン出場",
-//   limit:new Date("2025-12-14"),
-//   progress:[{
-//     title:"ミーティング",
-//     date:new Date("2025-12-8"),
-//   },],
-// },
-// {
-//   userId:1,
-//   id:2,
-//   content:"応用情報合格",
-//   limit:new Date("2026-4-1"),
-//   progress:[
-//     {
-//       title:"過去問200問やった",
-//       date:new Date("2025-10-1"),
-//     },
-//     {
-//       title:"模擬試験",
-//       date:new Date("2025-10-12"),
-//     },
-//   ],
-// },
-// {
-//   userId:1,
-//   id:3,
-//   content:"雀豪",
-//   limit:new Date("2026-12-31"),
-//   progress:[],
-// }
-// ];
+const API_BASE_URL = 'http://localhost:8080/api/v1';
+const MOCK_TOKEN = 'mock_access_token';
+const MOCK_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
 
-const initGoals=[
-  {
-    id:1,
-    title:"個人開発する",
-    progress:[
-      {
-        title:"デザイン作成",
-        percentage: 80,
-        imageUrl:""
-      }
-    ],
-  },
-  {
-    id:2,
-    title:"ハッカソン参加",
-    progress:[
-      {
-        title:"アイデア出し",
-        percentage: 50,
-        imageUrl:""
-      }
-    ],
-  },
-]
+// const initGoals=[
+//   {
+//     id:1,
+//     title:"個人開発する",
+//     progress:[
+//       {
+//         title:"デザイン作成",
+//         percentage: 80,
+//         imageUrl:""
+//       }
+//     ],
+//   },
+//   {
+//     id:2,
+//     title:"ハッカソン参加",
+//     progress:[
+//       {
+//         title:"アイデア出し",
+//         percentage: 50,
+//         imageUrl:""
+//       }
+//     ],
+//   },
+// ]
 
 export default function AddPost() {
-  const [goals,setGoals]=useState(initGoals);
+  const [goals,setGoals]=useState([]);
+  const [goalsTitle,setGoalsTitle]=useState([]);
   const [selectedGoalId,setSelectedGoalId]=useState(null);
   const [postContent,setPostContent]=useState("");
   const [postPercent,setPostPercent]=useState(0);
   const [postImageUrl,setImageUrl]=useState("");
 
-  const addProgress=(e)=>{
+  useEffect(()=>{
+      const fetchGoalsTitle = async () => {
+      const response = await fetch(`${API_BASE_URL}/goals`, {
+        headers: {
+          'Authorization': `Bearer ${MOCK_TOKEN}`,
+        },
+      });    
+
+      const data = await response.json();
+      setGoalsTitle(data);
+    };
+
+    fetchGoalsTitle();
+    const fetchPosts=async()=>{
+      const res = await fetch(`${API_BASE_URL}/posts`,{
+        headers: {
+          "Authorization":`Bearer ${MOCK_TOKEN}`,
+        },
+      });
+      const data = await res.json();
+      setGoals(data); 
+    }
+    fetchPosts();
+  },[]);
+  const addProgress=async(e)=>{
     if(postContent === "" || postPercent === ""){
       alert("新しい進捗を入力してください")
       return
     }
     e.preventDefault();
     const newProgress={
-      title:postContent,
-      percentage:postPercent,
-      imageUrl: postImageUrl,
+      id:Math.floor(Math.random() * 1e5),
+      user_id: MOCK_USER_ID,
+      goal_id: selectedGoalId,
+      content: postContent,
+      // percentage:postPercent,
+      image_urls: postImageUrl,
+      reaction_count: 5,
+      created_at: Date.now(),
+      updated_at: Date.now(),
     };
+    const res = await fetch(`${API_BASE_URL}/posts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${MOCK_TOKEN}`,
+      },
+      body: JSON.stringify(newProgress),
+    });
+    console.log('res', res);
+    
     setGoals(
       goals.map((goal)=>{
-        if(goal.id===selectedGoalId){
+        if(goal.goal_id===selectedGoalId){
           return {
-            ...goal,
-            progress:
-              [
-                ...goal.progress,newProgress
-              ]  ,
-          };
+                ...goal,newProgress         
+            };
       }
       return goal;
   }))
@@ -100,7 +105,7 @@ export default function AddPost() {
   setImageUrl("");
   }
 
-  const selectedGoal = goals.find(g => g.id === selectedGoalId)
+  const selectedGoal = goals.find(g => g.goal_id === selectedGoalId)
 
   const openForm = (id) => {
     setSelectedGoalId(id)
@@ -115,12 +120,18 @@ export default function AddPost() {
         <main className="main addPostMain">
           <div>
               <div className={styles.post}>
-                {initGoals.map((goal)=>{
+                {goals.map((goal)=>{
                   return(
-                    <div key={goal.id}>
+                    <div key={goal.goal_id}>
                       <div className={styles.option}>
-                        <a onClick={()=>openForm(goal.id)}>
-                        {goal.title}
+                        <a onClick={()=>openForm(goal.goal_id)}>
+                        {goalsTitle.map((g)=>{
+                          return(
+                            <span>
+                              {g.id===goal.goal_id && g.title}
+                            </span>
+                          )
+                        })}
                         </a>
                       </div>
                       {/* <small>期限: {new Date(goal.limit).toLocaleDateString()}</small> */}
@@ -132,8 +143,11 @@ export default function AddPost() {
                       {selectedGoalId !== null && selectedGoal && (
           <div className={styles.test}>
               <div>
-                <h2 className={styles.option}>{selectedGoal.title}</h2>
-                <p>投稿文</p>
+                <h2>投稿一覧</h2>
+                <ul>
+                  <li className={styles.fukidashi}>{selectedGoal.content}</li>
+                </ul>
+                <p>新規投稿</p>
                 <form onSubmit={addProgress}>
                   <input
                     type="text"

@@ -24,7 +24,9 @@ function App() {
           <Route path={ROUTES.timeLine} element={<TimeLine />}/>
           <Route path={ROUTES.settingGoal} element={<SettingGoal />}/>
           <Route path={ROUTES.addPost} element={<AddPost />}/>
-          <Route path={ROUTES.goals} element={<Goals />}/>
+          <Route path="/"
+          // {ROUTES.goals}
+           element={<Goals />}/>
         </Routes>
       </BrowserRouter>
     </>
