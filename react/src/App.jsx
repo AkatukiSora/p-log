@@ -11,7 +11,7 @@ import SettingGoal from './pages/settingGoal/SettingGoal.jsx'
 import Goals from './pages/goals/Goals.jsx'
 
 function App() {
-
+  
   return (
     <>
       <BrowserRouter>

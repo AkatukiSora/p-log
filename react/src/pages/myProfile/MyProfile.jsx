@@ -1,9 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonBottomOption from "../../components/button/buttonBottomOption/ButtonBottomOption";
 import ButtonTopMyOption from "../../components/button/buttonTopMyOption/ButtonTopMyOption";
 import styles from "./MyProfile.module.css";
 
+const API_BASE_URL = 'http://localhost:8080/api/v1';
+const MOCK_TOKEN = 'mock_access_token';
+
 export default function MyProfile() {
+
+    const [myProfileDatas, setMyProfileDatas] = useState(null)
+    const [myProfileIconData, setMyProfileIconData] = useState("")
+    useEffect(() => {
+        const fetchMyProfile = async () => {
+            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${MOCK_TOKEN}`,
+                },
+            });
+            const data = await response.json();
+            setMyProfileDatas(data);
+
+            const iconResponse = await fetch(
+                `${API_BASE_URL}/users/${data.id}/icon`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${MOCK_TOKEN}`,
+                    },
+                }
+            );
+            const iconData = await iconResponse.json();
+            setMyProfileIconData(iconData.url);
+        };
+
+        fetchMyProfile();
+    }, []);
+
+    
+    // 追加：取得したプロフィールを各入力欄に反映
+    useEffect(() => {
+        if (!myProfileDatas) return;
+
+        setNameData(myProfileDatas.name ?? "");
+        setBirthData(myProfileDatas.birthday ?? "");
+        setGenreData(myProfileDatas.genres ?? "");
+        setBirthPlaceData(myProfileDatas.hometown ?? "");
+        setCommentData(myProfileDatas.bio ?? "");
+    }, [myProfileDatas]);
+
 
     // プロフィール情報のステート
     const [previewData, setPreview] = useState(null);
@@ -26,13 +69,55 @@ export default function MyProfile() {
     };
     
     // 変更ボタンの処理
-    const changeProInfo = () => {
+    const changeProInfo = async () => {
+        
         // アイコンと名前を書いてたら通る。
         if(previewData === null || nameData === "") {
             alert("アイコンと名前を入力してください")
             return
         }
-        
+
+
+
+
+        // 未実装
+        // 新規登録はpostで、二回目以降はputメソッドを使用する
+        const Profile = {
+            "name": nameData,
+            "birthday": birthData, 
+            "genres": genre,
+            "hometown": birthPlaceData,
+            "bio": commentData
+        }
+
+        console.log('Profile', Profile);
+
+        // プロフィール情報をpostメソッドで送信
+        const res = await fetch(`${API_BASE_URL}/users`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${MOCK_TOKEN}`,
+        },
+        body: JSON.stringify(Profile),
+        });
+
+        console.log('res', res);
+
+
+        const Icon = {
+            "icon" : previewData ?? myProfileIconData
+        }
+
+        // アイコン情報をpostメソッドで送信
+        const resIcon = await fetch(`${API_BASE_URL}/users`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${MOCK_TOKEN}`,
+        },
+        body: JSON.stringify(Icon),
+        });
     }
 
     return (
@@ -45,12 +130,13 @@ export default function MyProfile() {
             <main className="main myMain">
                 {/* アイコン */}
                 <div className={styles.icon}>
-                    {previewData && (
-                        <img className={styles.previewImage} src={previewData} alt="previewData"/>
+                    {(previewData || myProfileIconData) && (
+                        <img className={styles.previewImage} src={previewData ?? myProfileIconData} alt="profile icon"
+                        />
                     )}
                     <br />
                     <label htmlFor="icon">アイコンを選択</label>
-                    <input type="file" name="icon" id="icon" onChange={previewFile} required />
+                    <input type="file" id="icon" onChange={previewFile} />
                 </div>
                 {/* 名前 */}
                 <div className={styles.form}>

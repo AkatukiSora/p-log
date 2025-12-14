@@ -3,8 +3,13 @@ import ButtonTopFriendOption from "../../components/button/buttonTopFriendOption
 import styles from "./FriendProfile.module.css"
 
 export default function FriendProfile() {
+
+    // 自身のプロフィール情報を取得
+    // 実装はしてない
+    
+
     // フレンドのプロフィール
-  return (
+    return (
     <>
         <title>ユーザ名のプロフィール</title>
         <header className="header friendHeader">
