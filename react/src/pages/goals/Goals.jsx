@@ -21,6 +21,32 @@ const Goals = () => {
           'Authorization': `Bearer ${MOCK_TOKEN}`,
         },
       }); 
+      
+      const res = [
+        {
+        userId: "user123",
+        // ... 他のフィールド
+        },
+        {
+          userId: "user343",
+        // ... 他のフィールド
+        }
+      ]
+      
+      const userIds = res.map(item => item.userId);
+      const userDataArray = userIds.map(async (userId) => {
+        const userResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${MOCK_TOKEN}`,
+          },
+        });
+        return userResponse.json();
+      })
+
+      const finalData = res.map((item, index) => ({
+        ...item,
+        userData: userDataArray.find((data) => data.userId === item.userId) ,
+      }));
 
       const data = await response.json();
       setGoals(data);
