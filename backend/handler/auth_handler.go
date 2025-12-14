@@ -99,7 +99,8 @@ func (h *Handler) AuthCallbackGet(ctx context.Context, params api.AuthCallbackGe
 		accessToken, refreshToken,
 	)
 
-	return &api.AuthCallbackGetNoContent{
+	return &api.AuthCallbackGetMovedPermanently{
+		Location:  api.NewOptString("/"),
 		SetCookie: api.NewOptString(setCookieHeader),
 	}, nil
 }

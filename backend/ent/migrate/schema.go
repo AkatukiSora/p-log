@@ -69,7 +69,7 @@ var (
 				Symbol:     "images_posts_images",
 				Columns:    []*schema.Column{ImagesColumns[4]},
 				RefColumns: []*schema.Column{PostsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "images_users_uploaded_images",
@@ -154,7 +154,7 @@ var (
 				Symbol:     "reactions_posts_reactions",
 				Columns:    []*schema.Column{ReactionsColumns[2]},
 				RefColumns: []*schema.Column{PostsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "reactions_users_reactions",

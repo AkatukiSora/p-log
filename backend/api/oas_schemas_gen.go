@@ -15,22 +15,33 @@ func (s *GeneralErrorStatusCode) Error() string {
 	return fmt.Sprintf("code %d: %+v", s.StatusCode, s.Response)
 }
 
-// AuthCallbackGetNoContent is response for AuthCallbackGet operation.
-type AuthCallbackGetNoContent struct {
+// AuthCallbackGetMovedPermanently is response for AuthCallbackGet operation.
+type AuthCallbackGetMovedPermanently struct {
+	Location  OptString
 	SetCookie OptString
 }
 
+// GetLocation returns the value of Location.
+func (s *AuthCallbackGetMovedPermanently) GetLocation() OptString {
+	return s.Location
+}
+
 // GetSetCookie returns the value of SetCookie.
-func (s *AuthCallbackGetNoContent) GetSetCookie() OptString {
+func (s *AuthCallbackGetMovedPermanently) GetSetCookie() OptString {
 	return s.SetCookie
 }
 
+// SetLocation sets the value of Location.
+func (s *AuthCallbackGetMovedPermanently) SetLocation(val OptString) {
+	s.Location = val
+}
+
 // SetSetCookie sets the value of SetCookie.
-func (s *AuthCallbackGetNoContent) SetSetCookie(val OptString) {
+func (s *AuthCallbackGetMovedPermanently) SetSetCookie(val OptString) {
 	s.SetCookie = val
 }
 
-func (*AuthCallbackGetNoContent) authCallbackGetRes() {}
+func (*AuthCallbackGetMovedPermanently) authCallbackGetRes() {}
 
 // AuthLoginGetMovedPermanently is response for AuthLoginGet operation.
 type AuthLoginGetMovedPermanently struct {
