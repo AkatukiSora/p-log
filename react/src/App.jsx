@@ -16,7 +16,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path={ROUTES.myList} element={<MyGoalsList />}/>
+          <Route path="/" element={<MyGoalsList />}/>
           <Route path={ROUTES.myProfile} element={<MyProfile />}/>
           <Route path={ROUTES.friendList} element={<FriendList />}/>
           <Route path={ROUTES.friendProfile} element={<FriendProfile />}/>
@@ -24,9 +24,9 @@ function App() {
           <Route path={ROUTES.timeLine} element={<TimeLine />}/>
           <Route path={ROUTES.settingGoal} element={<SettingGoal />}/>
           <Route path={ROUTES.addPost} element={<AddPost />}/>
-          <Route path="/"
-          // {ROUTES.goals}
-           element={<Goals />}/>
+          {/* <Route path="/"
+          {ROUTES.goals}
+           element={<Goals />}/> */}
         </Routes>
       </BrowserRouter>
     </>
