@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.goalList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.goalItem {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
+  color: white;
+  transition: transform 0.2s;
+}
+
+.goalItem:hover {
+  transform: scale(1.02);
+}
+
+.goalTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.goalMeta {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  opacity: 0.9;
+}
