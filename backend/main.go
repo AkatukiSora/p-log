@@ -3,11 +3,14 @@ package main
 //go:generate go run github.com/ogen-go/ogen/cmd/ogen@latest --target api --clean ../docs/api.yaml
 
 import (
+	"context"
 	"log"
+	"os"
 
 	"backend/api"
 	"backend/handler"
 	"backend/internal/db"
+	"backend/internal/image"
 	"backend/internal/jwt"
 	"backend/security"
 	"net/http"
@@ -16,16 +19,30 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	// データベースクライアントの作成
 	client, err := db.CreateClient()
 	if err != nil {
 		log.Fatalf("failed to create database client: %v", err)
 	}
 
+	// GCSバケット名を環境変数から取得
+	bucketName := os.Getenv("GCS_BUCKET_NAME")
+	if bucketName == "" {
+		log.Fatalf("GCS_BUCKET_NAME environment variable is required")
+	}
+
+	// ImageServiceの作成（IAM認証を使用）
+	imageService, err := image.NewImageService(ctx, bucketName)
+	if err != nil {
+		log.Fatalf("failed to create image service: %v", err)
+	}
+
 	// ハンドラーとセキュリティハンドラーの作成
 	jwtConfig := jwt.NewJWTConfig()
 	jwtHandler := jwt.NewJwtHandler(jwtConfig, client)
-	h, err := handler.NewHandler(client, jwtHandler)
+	h, err := handler.NewHandler(client, jwtHandler, imageService)
 	if err != nil {
 		log.Fatalf("failed to create handler: %v", err)
 	}

@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+	"io"
 
 	"backend/api"
 	"backend/ent"
@@ -121,7 +124,7 @@ func (h *Handler) UsersUserIDPut(ctx context.Context, req *api.UserRequest, para
 	}
 
 	// 更新を実行
-	updatedUser, err := update.Save(ctx)
+	_, err = update.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +162,7 @@ func (h *Handler) UsersUserIDPut(ctx context.Context, req *api.UserRequest, para
 	}
 
 	// 更新後のユーザーを再取得（ジャンルを含む）
-	updatedUser, err = h.client.User.Query().
+	updatedUser, err := h.client.User.Query().
 		Where(user.IDEQ(params.UserID)).
 		WithGenres().
 		Only(ctx)
@@ -195,19 +198,51 @@ func (h *Handler) UsersUserIDIconDelete(ctx context.Context, params api.UsersUse
 		return nil, ErrForbidden
 	}
 
-	// ユーザーが存在するか確認
-	exists, err := h.client.User.Query().Where(user.IDEQ(params.UserID)).Exist(ctx)
+	// ユーザーを取得
+	u, err := h.client.User.Get(ctx, params.UserID)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
-	if !exists {
+
+	// プロフィール画像がない場合は404
+	if u.ProfilePictureID == nil {
 		return nil, ErrNotFound
 	}
 
-	// TODO: プロフィール画像を削除する処理を実装
-	// 1. ユーザーのprofile_picture_idを取得
-	// 2. 画像をストレージから削除
-	// 3. profile_picture_idをnullに設定
+	// 画像メタデータを取得
+	img, err := h.client.Image.Get(ctx, *u.ProfilePictureID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			// DBに画像が見つからない場合は、profile_picture_idだけクリア
+			_, err = h.client.User.UpdateOneID(params.UserID).
+				ClearProfilePictureID().
+				Save(ctx)
+			return &api.UsersUserIDIconDeleteNoContent{}, err
+		}
+		return nil, err
+	}
+
+	// GCSから画像を削除
+	if err := h.imageService.DeleteImage(ctx, img.ObjectName); err != nil {
+		// GCS削除に失敗してもログに記録して続行
+		fmt.Printf("failed to delete image from GCS: %v\n", err)
+	}
+
+	// DBから画像メタデータを削除
+	if err := h.client.Image.DeleteOneID(*u.ProfilePictureID).Exec(ctx); err != nil {
+		return nil, fmt.Errorf("failed to delete image metadata: %w", err)
+	}
+
+	// ユーザーのprofile_picture_idをクリア
+	_, err = h.client.User.UpdateOneID(params.UserID).
+		ClearProfilePictureID().
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	return &api.UsersUserIDIconDeleteNoContent{}, nil
 }
@@ -215,21 +250,38 @@ func (h *Handler) UsersUserIDIconDelete(ctx context.Context, params api.UsersUse
 // UsersUserIDIconGet implements GET /users/{user_id}/icon operation.
 // ユーザーアイコン画像取得
 func (h *Handler) UsersUserIDIconGet(ctx context.Context, params api.UsersUserIDIconGetParams) (api.UsersUserIDIconGetRes, error) {
-	// ユーザーが存在するか確認
-	exists, err := h.client.User.Query().Where(user.IDEQ(params.UserID)).Exist(ctx)
+	// ユーザーを取得
+	u, err := h.client.User.Get(ctx, params.UserID)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
-	if !exists {
+
+	// プロフィール画像がない場合は404
+	if u.ProfilePictureID == nil {
 		return nil, ErrNotFound
 	}
 
-	// TODO: プロフィール画像を取得する処理を実装
-	// 1. ユーザーのprofile_picture_idを取得
-	// 2. 画像をストレージから取得
-	// 3. 画像バイナリを返す
+	// 画像メタデータを取得
+	img, err := h.client.Image.Get(ctx, *u.ProfilePictureID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
 
-	return &api.UsersUserIDIconGetOK{}, nil
+	// GCSから画像を取得
+	reader, _, err := h.imageService.GetImage(ctx, img.ObjectName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get image from GCS: %w", err)
+	}
+
+	return &api.UsersUserIDIconGetOK{
+		Data: reader,
+	}, nil
 }
 
 // UsersUserIDIconPost implements POST /users/{user_id}/icon operation.
@@ -251,20 +303,85 @@ func (h *Handler) UsersUserIDIconPost(ctx context.Context, req api.OptUsersUserI
 		return nil, ErrForbidden
 	}
 
-	// ユーザーが存在するか確認
-	exists, err := h.client.User.Query().Where(user.IDEQ(params.UserID)).Exist(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, ErrNotFound
+	// リクエストボディが存在するかチェック
+	if !req.Set {
+		return nil, ErrBadRequest
 	}
 
-	// TODO: プロフィール画像をアップロードする処理を実装
-	// 1. リクエストから画像データを取得
-	// 2. 画像をストレージにアップロード
-	// 3. 既存のprofile_picture_idがあれば古い画像を削除
-	// 4. ユーザーのprofile_picture_idを更新
+	// アイコンファイルが存在するかチェック
+	iconOpt := req.Value.GetIcon()
+	if !iconOpt.Set {
+		return nil, ErrBadRequest
+	}
+
+	multipartFile := iconOpt.Value
+
+	// ユーザーを取得（既存のprofile_picture_idを確認）
+	u, err := h.client.User.Get(ctx, params.UserID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	// ファイルの内容を読み込む（UploadImageでSeekが必要なため、バッファに読み込む）
+	fileData, err := io.ReadAll(multipartFile.File)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %w", err)
+	}
+	fileReader := bytes.NewReader(fileData)
+
+	// GCSに画像をアップロード
+	objectName, contentType, err := h.imageService.UploadImage(ctx, fileReader, multipartFile.Name, multipartFile.Header)
+	if err != nil {
+		return nil, fmt.Errorf("failed to upload image: %w", err)
+	}
+
+	// DBに画像メタデータを保存
+	img, err := h.client.Image.Create().
+		SetObjectName(objectName).
+		SetContentType(contentType).
+		SetUploadedByID(userID).
+		Save(ctx)
+	if err != nil {
+		// アップロードに失敗した場合、GCSから画像を削除
+		if delErr := h.imageService.DeleteImage(ctx, objectName); delErr != nil {
+			fmt.Printf("failed to cleanup uploaded image: %v\n", delErr)
+		}
+		return nil, fmt.Errorf("failed to save image metadata: %w", err)
+	}
+
+	// 既存のプロフィール画像がある場合は削除
+	if u.ProfilePictureID != nil {
+		// 古い画像メタデータを取得
+		oldImg, err := h.client.Image.Get(ctx, *u.ProfilePictureID)
+		if err == nil {
+			// GCSから古い画像を削除
+			if delErr := h.imageService.DeleteImage(ctx, oldImg.ObjectName); delErr != nil {
+				fmt.Printf("failed to delete old image from GCS: %v\n", delErr)
+			}
+			// DBから古い画像メタデータを削除
+			if delErr := h.client.Image.DeleteOneID(*u.ProfilePictureID).Exec(ctx); delErr != nil {
+				fmt.Printf("failed to delete old image metadata: %v\n", delErr)
+			}
+		}
+	}
+
+	// ユーザーのprofile_picture_idを更新
+	_, err = h.client.User.UpdateOneID(params.UserID).
+		SetProfilePictureID(img.ID).
+		Save(ctx)
+	if err != nil {
+		// 更新に失敗した場合、新しくアップロードした画像を削除
+		if delErr := h.imageService.DeleteImage(ctx, objectName); delErr != nil {
+			fmt.Printf("failed to cleanup uploaded image: %v\n", delErr)
+		}
+		if delErr := h.client.Image.DeleteOneID(img.ID).Exec(ctx); delErr != nil {
+			fmt.Printf("failed to cleanup image metadata: %v\n", delErr)
+		}
+		return nil, fmt.Errorf("failed to update user profile_picture_id: %w", err)
+	}
 
 	return &api.UsersUserIDIconPostNoContent{}, nil
 }

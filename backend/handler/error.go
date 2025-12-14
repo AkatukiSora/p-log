@@ -17,6 +17,9 @@ var (
 	// ErrJWTHandlerRequired はJWTHandlerが必須であることを示すエラーです。
 	ErrJWTHandlerRequired = errors.New("JWT handler is required")
 
+	// ErrImageServiceRequired はImageServiceが必須であることを示すエラーです。
+	ErrImageServiceRequired = errors.New("image service is required")
+
 	// ErrNotFound はリソースが見つからない場合のエラーです。
 	ErrNotFound = errors.New("resource not found")
 

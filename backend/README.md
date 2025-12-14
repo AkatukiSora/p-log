@@ -73,7 +73,36 @@ gcloud run deploy your-service \
   --set-env-vars="USE_CLOUD_SQL=true,CLOUD_SQL_INSTANCE=your-project-id:your-region:your-instance-name,DB_USER=your-user,DB_NAME=p-log,USE_IAM_AUTH=true"
 ```
 
-### 3. Google OAuth2の設定
+### 3. Google Cloud Storage設定
+
+画像アップロード機能を使用するには、Google Cloud Storageバケットが必要です。
+
+**前提条件：**
+- Google Cloud Storageバケットが作成済みであること
+- サービスアカウントにバケットへの書き込み権限があること
+  - `Storage Object Admin`ロールまたは`Storage Object Creator`ロール
+
+**環境変数の設定：**
+
+```env
+GCS_BUCKET_NAME=your-bucket-name
+```
+
+**IAM認証：**
+- ローカル開発環境では`GOOGLE_APPLICATION_CREDENTIALS`環境変数でサービスアカウントキーを指定
+- Cloud Run上では、サービスアカウントの認証情報が自動的に使用されます
+
+**バケットの作成例：**
+
+```bash
+# バケット作成
+gsutil mb -p your-project-id -c STANDARD -l asia-northeast1 gs://your-bucket-name
+
+# サービスアカウントに権限を付与
+gsutil iam ch serviceAccount:your-service-account@your-project.iam.gserviceaccount.com:objectAdmin gs://your-bucket-name
+```
+
+### 4. Google OAuth2の設定
 
 1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
 2. プロジェクトを作成または選択
@@ -91,7 +120,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_REDIRECT_URL=http://localhost:8080/api/v1/auth/callback
 ```
 
-### 3. JWT秘密鍵の設定
+### 5. JWT秘密鍵の設定
 
 `.env`ファイルで強力なランダム文字列を設定します：
 
@@ -106,7 +135,7 @@ openssl rand -base64 32
 JWT_SECRET=生成された秘密鍵
 ```
 
-### 4. 認証フロー
+### 6. 認証フロー
 
 #### ログインフロー：
 
@@ -149,6 +178,66 @@ func (h *Handler) SomeAuthenticatedEndpoint(ctx context.Context, ...) (..., erro
 - `security.GetUserIDFromContext(ctx)` を使用してcontextからユーザーIDを取得します
 - 戻り値は `(string, bool)` の形式で、第2引数でIDの取得成功/失敗を判定できます
 - JWT認証が正常に完了すると、`security.SecurityHandler` によって自動的にcontextにユーザーIDが保存されます
+
+### 画像アップロード機能の使用方法
+
+画像アップロード機能は、Google Cloud Storageを使用して実装されています。
+
+#### 画像アップロードエンドポイント（POST /images）
+
+```go
+// ImagesPost implements POST /images operation.
+func (h *Handler) ImagesPost(ctx context.Context, req api.OptImagesPostReq) (api.ImagesPostRes, error) {
+    // 1. リクエストから画像ファイルを取得
+    multipartFile := req.Value.GetImage().Value
+    
+    // 2. contextから認証済みユーザーIDを取得
+    userIDStr, err := security.GetUserIDFromContext(ctx)
+    if err != nil {
+        return nil, ErrUnauthorized
+    }
+    
+    // 3. GCSに画像をアップロード（UUID付きファイル名で保存）
+    objectName, contentType, err := h.imageService.UploadImage(ctx, fileReader, multipartFile.Name, multipartFile.Header)
+    
+    // 4. DBに画像メタデータ（UUID、オブジェクト名、コンテンツタイプ）を保存
+    img, err := h.client.Image.Create().
+        SetObjectName(objectName).
+        SetContentType(contentType).
+        SetUploadedByID(userID).
+        Save(ctx)
+    
+    // 5. 画像IDとURLを返す
+    return &api.Image{
+        ID:  img.ID,    // UUIDが返される
+        URL: fmt.Sprintf("/api/v1/images/%s", img.ID.String()),
+    }, nil
+}
+```
+
+#### 画像取得エンドポイント（GET /images/{image_id}）
+
+```go
+// ImagesImageIDGet implements GET /images/{image_id} operation.
+func (h *Handler) ImagesImageIDGet(ctx context.Context, params api.ImagesImageIDGetParams) (api.ImagesImageIDGetRes, error) {
+    // 1. DBから画像メタデータを取得
+    img, err := h.client.Image.Get(ctx, params.ImageID)
+    
+    // 2. GCSから画像データを取得
+    reader, _, err := h.imageService.GetImage(ctx, img.ObjectName)
+    
+    // 3. 画像データをストリームとして返す
+    return &api.ImagesImageIDGetOK{
+        Data: reader,
+    }, nil
+}
+```
+
+**ポイント：**
+- 画像ファイル名はUUIDで自動生成されるため、重複の心配がありません
+- DBにはUUID、GCSオブジェクト名、コンテンツタイプが保存されます
+- GCSへのアクセスはIAM認証で行われるため、安全です
+- 画像取得時は、DBからメタデータを取得してからGCSから画像データを読み込みます
 
 ### APIパラメーターの受け取り方
 
