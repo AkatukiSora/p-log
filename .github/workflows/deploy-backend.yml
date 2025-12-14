@@ -68,6 +68,7 @@ jobs:
           env_vars: |
             USE_CLOUD_SQL=true
             USE_IAM_AUTH=true
+            CLOUD_SQL_INSTANCE=${{ secrets.CLOUD_SQL_INSTANCE }}
             GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}
             GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
