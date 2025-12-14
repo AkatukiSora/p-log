@@ -9,6 +9,10 @@ type AuthMeGetRes interface {
 	authMeGetRes()
 }
 
+type AuthRefreshPostRes interface {
+	authRefreshPostRes()
+}
+
 type FriendsGetRes interface {
 	friendsGetRes()
 }
@@ -83,10 +87,6 @@ type PostsPostRes interface {
 
 type TimelineGetRes interface {
 	timelineGetRes()
-}
-
-type UsersPostRes interface {
-	usersPostRes()
 }
 
 type UsersUserIDDeleteRes interface {

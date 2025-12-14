@@ -27,8 +27,8 @@ func (UnimplementedHandler) AuthCallbackGet(ctx context.Context, params AuthCall
 // OIDCログインを開始.
 //
 // GET /auth/login
-func (UnimplementedHandler) AuthLoginGet(ctx context.Context) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) AuthLoginGet(ctx context.Context) (r *AuthLoginGetMovedPermanently, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // AuthLogoutPost implements POST /auth/logout operation.
@@ -46,6 +46,15 @@ func (UnimplementedHandler) AuthLogoutPost(ctx context.Context) error {
 //
 // GET /auth/me
 func (UnimplementedHandler) AuthMeGet(ctx context.Context) (r AuthMeGetRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AuthRefreshPost implements POST /auth/refresh operation.
+//
+// アクセストークンのリフレッシュ.
+//
+// POST /auth/refresh
+func (UnimplementedHandler) AuthRefreshPost(ctx context.Context) (r AuthRefreshPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -226,15 +235,6 @@ func (UnimplementedHandler) PostsPostIDReactionsPost(ctx context.Context, params
 //
 // GET /timeline
 func (UnimplementedHandler) TimelineGet(ctx context.Context, params TimelineGetParams) (r TimelineGetRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UsersPost implements POST /users operation.
-//
-// 新規ユーザー登録.
-//
-// POST /users
-func (UnimplementedHandler) UsersPost(ctx context.Context, req *UserRequest) (r UsersPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
