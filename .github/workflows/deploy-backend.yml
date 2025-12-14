@@ -65,6 +65,7 @@ jobs:
             --min-instances=0
             --max-instances=10
             --set-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }}
+            --service-account=backend-runner@p-log-481112.iam.gserviceaccount.com
           env_vars: |
             USE_CLOUD_SQL=true
             USE_IAM_AUTH=true
