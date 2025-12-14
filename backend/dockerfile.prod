@@ -1,0 +1,44 @@
+# ビルドステージ
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /app
+
+# 依存関係のキャッシュを最適化するため、go.modとgo.sumを先にコピー
+COPY go.mod go.sum ./
+
+# キャッシュマウントを使用してGo modulesをダウンロード
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
+
+# ソースコードをコピー
+COPY . .
+
+# キャッシュマウントを使用してビルド
+# CGO_ENABLED=0: 静的リンクバイナリを生成（distrolessで実行するため）
+# -ldflags="-w -s": デバッグ情報を削除してバイナリサイズを削減
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o /app/server \
+    .
+
+# 本番ステージ（distroless）
+FROM gcr.io/distroless/static-debian12:nonroot
+
+WORKDIR /app
+
+# ビルドステージから実行可能ファイルをコピー
+COPY --from=builder /app/server /app/server
+
+# distrolessのnonrootユーザーで実行（UID 65532）
+USER nonroot:nonroot
+
+# ポート設定（アプリケーションのポート番号に応じて調整）
+EXPOSE 8080
+
+# ヘルスチェック用のエンドポイント（必要に応じて調整）
+# distrolessにはシェルがないため、ヘルスチェックは外部から実行
+
+# アプリケーション起動
+ENTRYPOINT ["/app/server"]

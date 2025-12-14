@@ -7,13 +7,16 @@ WORKDIR /app
 
 # 依存関係の管理用レイヤー（go mod tidyとgo mod download）
 COPY go.mod go.sum ./
-RUN go mod download && go mod tidy
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download && go mod tidy
 
 # ソースコードをコピー
 COPY . .
 
 # アプリケーションのビルド用レイヤー
-RUN go build -o /main .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go build -o /main .
 
 # 実行
 CMD ["/main"]
