@@ -14,7 +14,66 @@
 cp .env.example .env
 ```
 
-### 2. Google OAuth2の設定
+### 2. データベース設定
+
+#### ローカル開発環境
+
+Docker Composeを使用してPostgreSQLを起動します：
+
+```bash
+docker compose up -d
+```
+
+`.env`ファイルでローカルデータベースの設定を確認：
+
+```env
+USE_CLOUD_SQL=false
+DB_HOST=db
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=password
+DB_NAME=p-log
+DB_SSLMODE=disable
+```
+
+#### 本番環境（Google Cloud SQL）
+
+Google Cloud SQLのPostgreSQLインスタンスを使用する場合の設定：
+
+**前提条件：**
+- Google Cloud SQLインスタンスが作成済みであること
+- IAM認証を有効化していること（推奨）
+- Cloud Runから接続する場合、サービスアカウントに必要な権限が付与されていること
+  - `Cloud SQL Client`ロール
+
+**環境変数の設定：**
+
+```env
+USE_CLOUD_SQL=true
+CLOUD_SQL_INSTANCE=your-project-id:your-region:your-instance-name
+DB_USER=your-database-user
+DB_NAME=p-log
+USE_IAM_AUTH=true
+```
+
+**注意事項：**
+- `CLOUD_SQL_INSTANCE`は`project-id:region:instance-name`の形式で指定
+- `USE_IAM_AUTH=true`の場合、パスワードは不要（IAM認証）
+- Cloud Run上で実行する場合、サービスアカウントの認証情報が自動的に使用されます
+- ローカルでCloud SQLに接続する場合は、Application Default Credentials（ADC）が必要：
+  ```bash
+  gcloud auth application-default login
+  ```
+
+**Cloud Runへのデプロイ時の設定：**
+
+```bash
+gcloud run deploy your-service \
+  --add-cloudsql-instances=your-project-id:your-region:your-instance-name \
+  --set-env-vars="USE_CLOUD_SQL=true,CLOUD_SQL_INSTANCE=your-project-id:your-region:your-instance-name,DB_USER=your-user,DB_NAME=p-log,USE_IAM_AUTH=true"
+```
+
+### 3. Google OAuth2の設定
 
 1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
 2. プロジェクトを作成または選択
