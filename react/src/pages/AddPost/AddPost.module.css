@@ -1,8 +1,8 @@
 .option{
-    width: 12vw;
+    width: 13vw;
     line-height: 20px;
-    margin: 0 auto;
-    padding: 5px;
+    margin: 3vw auto;
+    padding: 1vw;
     background-image: linear-gradient(37deg, rgb(77, 163, 238), rgba(26, 2, 128, 1));
     font-size: 15px;
     color: white;
