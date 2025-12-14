@@ -10,6 +10,7 @@ export default function MyProfile() {
 
     const [myProfileDatas, setMyProfileDatas] = useState(null)
     const [myProfileIconData, setMyProfileIconData] = useState("")
+
     useEffect(() => {
         const fetchMyProfile = async () => {
             const response = await fetch(`${API_BASE_URL}/auth/me`, {
@@ -36,7 +37,7 @@ export default function MyProfile() {
     }, []);
 
     
-    // 追加：取得したプロフィールを各入力欄に反映
+    // 取得したプロフィールを各入力欄に反映
     useEffect(() => {
         if (!myProfileDatas) return;
 
@@ -118,6 +119,8 @@ export default function MyProfile() {
         },
         body: JSON.stringify(Icon),
         });
+
+        console.log("icon",resIcon)
     }
 
     return (
